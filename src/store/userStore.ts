@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { IUser } from '../models/IUser';
+import { IUser } from '../types/IUser';
 
 interface UserState {
   users: IUser[];

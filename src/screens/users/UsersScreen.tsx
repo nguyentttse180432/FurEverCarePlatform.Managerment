@@ -1,4 +1,4 @@
-import UserList from "../../components/features/UserList";
+import UserList from "../../components/features/user/UserList";
 import React from "react";
 
 const UsersScreen: React.FC = () => {

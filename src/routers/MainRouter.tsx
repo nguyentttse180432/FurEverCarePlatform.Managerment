@@ -5,6 +5,7 @@ import HeaderComponent from "../components/common/HeaderComponent";
 import HomePage from "../screens/HomeScreen";
 import UsersScreen from "../screens/users/UsersScreen";
 import UserDetailScreen from "../screens/users/UserDetailScreen";
+import NotFound from "../screens/NotFound";
 const { Content, Footer } = Layout;
 const MainRouter = () => {
   return (
@@ -24,21 +25,14 @@ const MainRouter = () => {
           <Content className="pt-3 container-fluid">
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="*" element={<NotFound />} />
               <Route>
                 <Route path="/users" element={<UsersScreen />} />
                 {/* <Route path="/users/add-user" element={<AddUser />} /> */}
-                <Route
-                  path="/users/detail/:slug"
-                  element={<UserDetailScreen />}
-                />
+                <Route path="/users/:id" element={<UserDetailScreen />} />
               </Route>
-              {/* <Route>
-                <Route path="/categories" element={<Categories />} />
-                <Route
-                  path="/categories/detail/:slug"
-                  element={<CategoryDetail />}
-                />
-              </Route> */}
+
+              {/* Add more route here */}
             </Routes>
           </Content>
           <Footer className="bg-white" />
