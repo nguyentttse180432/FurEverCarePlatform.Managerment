@@ -1,14 +1,16 @@
-import { Outlet } from 'react-router-dom'
-import './App.css'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Routers from "./routers/Routers";
 
+const queryClient = new QueryClient();
 
 function App() {
-
   return (
     <>
-      <Outlet />
+      <QueryClientProvider client={queryClient}>
+        <Routers />
+      </QueryClientProvider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
