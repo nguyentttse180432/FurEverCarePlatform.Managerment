@@ -7,6 +7,9 @@ import UsersScreen from "../screens/users/UsersScreen";
 import UserDetailScreen from "../screens/users/UserDetailScreen";
 import NotFound from "../screens/NotFound";
 import AddUserScreen from "../screens/users/AddUserScreen";
+import StoresScreen from "../screens/stores/StoresScreen";
+import AddStoreScreen from "../screens/stores/AddStoreScreen";
+import StoreDetailScreen from "../screens/stores/StoreDetailScreen";
 const { Content, Footer } = Layout;
 const MainRouter = () => {
   return (
@@ -27,10 +30,18 @@ const MainRouter = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="*" element={<NotFound />} />
+              {/* Demo user route */}
               <Route>
                 <Route path="/users" element={<UsersScreen />} />
                 <Route path="/users/add-user" element={<AddUserScreen />} />
                 <Route path="/users/:id" element={<UserDetailScreen />} />
+              </Route>
+
+              {/* Store route */}
+              <Route>
+                <Route path="/stores" element={<StoresScreen />} />
+                <Route path="/stores/add-store" element={<AddStoreScreen />} />
+                <Route path="/stores/:id" element={<StoreDetailScreen />} />
               </Route>
 
               {/* Add more route here */}
