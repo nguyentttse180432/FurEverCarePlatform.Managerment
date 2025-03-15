@@ -6,6 +6,7 @@ import HomePage from "../screens/HomeScreen";
 import UsersScreen from "../screens/users/UsersScreen";
 import UserDetailScreen from "../screens/users/UserDetailScreen";
 import NotFound from "../screens/NotFound";
+import AddUserScreen from "../screens/users/AddUserScreen";
 const { Content, Footer } = Layout;
 const MainRouter = () => {
   return (
@@ -28,7 +29,7 @@ const MainRouter = () => {
               <Route path="*" element={<NotFound />} />
               <Route>
                 <Route path="/users" element={<UsersScreen />} />
-                {/* <Route path="/users/add-user" element={<AddUser />} /> */}
+                <Route path="/users/add-user" element={<AddUserScreen />} />
                 <Route path="/users/:id" element={<UserDetailScreen />} />
               </Route>
 

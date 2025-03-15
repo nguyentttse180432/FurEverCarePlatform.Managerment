@@ -29,7 +29,7 @@ const SiderComponent = () => {
         },
         {
           key: "addNew",
-          label: <Link to={`/user/add-user`}>Add new</Link>,
+          label: <Link to={`/users/add-user`}>Add new</Link>,
         },
       ],
     },
