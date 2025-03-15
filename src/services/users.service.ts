@@ -11,4 +11,9 @@ const fetchUser = async (id: number) => {
   return response.data;
 };
 
-export { fetchUsers, fetchUser };
+const addUser = async (user: IUser) => {
+  const response = await client.post<IUser>("/users", user);
+  return response.data;
+};
+
+export { fetchUsers, fetchUser, addUser };
