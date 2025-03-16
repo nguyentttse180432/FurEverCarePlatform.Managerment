@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { colors } from "../../constants/colors";
 import { AiOutlinePlus } from "react-icons/ai";
 import { AiOutlineReload } from "react-icons/ai";
+import { useNavigate } from "react-router";
 
 interface DataType {
   key: string;
@@ -101,6 +102,8 @@ const StoresScreen = () => {
   // const [openUpdateDrawer, setOpenUpdateDrawer] = useState<boolean>(false);
   const [isDrawerLoading, setIsDrawerLoading] = useState<boolean>(false);
 
+  const navigate = useNavigate();
+
   const showLoading = () => {
     setOpenViewDrawer(true);
     setIsDrawerLoading(true);
@@ -153,6 +156,7 @@ const StoresScreen = () => {
                 type="primary"
                 style={{ marginLeft: "auto", marginRight: 10 }}
                 icon={<AiOutlinePlus />}
+                onClick={() => navigate("/stores/add-store", { replace: true })}
               >
                 Add Store
               </Button>

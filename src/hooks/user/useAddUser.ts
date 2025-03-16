@@ -11,7 +11,6 @@ export const useAddUser = () => {
     onSuccess: (user: IUser) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       navigate("/users", { replace: true });
-      console.log("User added successfully", user);
     },
   });
 };
