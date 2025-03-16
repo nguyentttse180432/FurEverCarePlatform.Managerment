@@ -38,7 +38,7 @@ const SiderComponent = () => {
     },
     {
       key: "stores",
-      label: "Stores Mangament",
+      label: "Stores Management",
       icon: <AiFillShop size={20} />,
       children: [
         {
@@ -49,6 +49,23 @@ const SiderComponent = () => {
         {
           key: "addNew",
           label: <Link to={`/stores/add-store`}>Add new</Link>,
+          icon: <AiOutlineFileAdd />,
+        },
+      ],
+    },
+    {
+      key: "products",
+      label: "product Management",
+      icon: <AiFillShop size={20} />,
+      children: [
+        {
+          key: "products",
+          label: <Link to={"/products"}>All</Link>,
+          icon: <AiOutlineTable />,
+        },
+        {
+          key: "addNew",
+          label: <Link to={`/products/add-product`}>Add new</Link>,
           icon: <AiOutlineFileAdd />,
         },
       ],
