@@ -10,6 +10,8 @@ import AddUserScreen from "../screens/users/AddUserScreen";
 import StoresScreen from "../screens/stores/StoresScreen";
 import AddStoreScreen from "../screens/stores/AddStoreScreen";
 import StoreDetailScreen from "../screens/stores/StoreDetailScreen";
+
+import UpdateProfile from "../screens/auth/UpdateProfile";
 const { Content, Footer } = Layout;
 const MainRouter = () => {
   return (
@@ -43,6 +45,8 @@ const MainRouter = () => {
                 <Route path="/stores/add-store" element={<AddStoreScreen />} />
                 <Route path="/stores/:id" element={<StoreDetailScreen />} />
               </Route>
+
+              <Route path="/profile" element={<UpdateProfile />} />
 
               {/* Add more route here */}
             </Routes>
