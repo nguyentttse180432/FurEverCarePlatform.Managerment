@@ -1,6 +1,6 @@
 import { Button, Form, Space, Spin, Steps, theme, Typography } from "antd";
 import { colors } from "../../constants/colors";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import StoreInfoFormItem from "../../components/features/stores/StoreInfoFormItem";
 import StoreFaxFormItem from "../../components/features/stores/StoreFaxFormItem";
 import StoreIdentityFormItem from "../../components/features/stores/StoreIdentityFormItem";
@@ -55,12 +55,6 @@ const AddStoreScreen = () => {
   const [form] = Form.useForm();
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const isValid =
-      form.isFieldsTouched(true) && form.getFieldsError().length === 0;
-    console.log(isValid);
-  }, [form.isFieldsTouched]);
 
   return (
     <>
