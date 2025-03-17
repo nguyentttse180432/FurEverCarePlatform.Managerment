@@ -11,12 +11,12 @@ export const useAuthStore = create<IAuthState>()(
       // 👇 Thêm setAuth để cập nhật user & token
       setAuth: (user, token) => set({ user, token }),
 
-      register: async ( email, password, name) => {
+      register: async ( email, password, name, phone) => {
         try {
           const response = await fetch("https://localhost:7246/api/Auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({email, password, name }),
+            body: JSON.stringify({email, password, name, phone }),
           });
 
           if (!response.ok) throw new Error("Registration failed");
@@ -32,12 +32,12 @@ export const useAuthStore = create<IAuthState>()(
         }
       },
 
-      login: async (email, password) => {
+      login: async (emailorPhone, password) => {
         try {
           const response = await fetch("https://localhost:7246/api/Auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ emailorPhone, password }),
           });
 
           if (!response.ok) throw new Error("Login failed");

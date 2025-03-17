@@ -13,9 +13,12 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
 
-  const handleLogin = async (values: { email: string; password: string }) => {
+  const handleLogin = async (values: {
+    emailorPhone: string;
+    password: string;
+  }) => {
     setIsLoading(true);
-    const success = await login(values.email, values.password);
+    const success = await login(values.emailorPhone, values.password);
 
     if (success) {
       message.success("Login successful!");
@@ -67,7 +70,7 @@ const Login = () => {
 
         <Form layout="vertical" form={form} onFinish={handleLogin} size="large">
           <Form.Item
-            name="email"
+            name="emailorPhone"
             label="Email"
             rules={[{ required: true, message: "Please enter your email!" }]}
           >

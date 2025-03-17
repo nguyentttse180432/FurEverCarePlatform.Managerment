@@ -24,7 +24,7 @@ const UpdateProfile = () => {
     email: string;
     name: string;
     password: string;
-    phone: number;
+    phone: string;
   }) => {
     const success = await updateProfile(
       values.email,
