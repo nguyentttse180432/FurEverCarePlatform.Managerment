@@ -58,8 +58,12 @@ const StoreFaxFormItem = () => {
 
   return (
     <div style={{ margin: "0 auto", width: "70%", padding: "40px 0px" }}>
-      <Form.Item label="Loại hình kinh doanh" name="businessType">
-        <Radio.Group style={{ textAlign: "left" }} defaultValue="personal">
+      <Form.Item
+        label="Loại hình kinh doanh"
+        name="businessType"
+        initialValue={"personal"}
+      >
+        <Radio.Group style={{ textAlign: "left" }} defaultValue={"personal"}>
           <Radio value="personal">Cá nhân</Radio>
           <Radio value="business">Doanh nghiệp</Radio>
         </Radio.Group>
@@ -67,7 +71,7 @@ const StoreFaxFormItem = () => {
 
       <Form.Item
         label="Tỉnh/Thành phố"
-        name="province"
+        name="businessAddressProvince"
         validateTrigger="onBlur"
         rules={[{ required: true, message: "Tỉnh/Thành phố không được trống" }]}
         style={{ marginBottom: 20, textAlign: "left" }}
@@ -88,7 +92,7 @@ const StoreFaxFormItem = () => {
 
       <Form.Item
         label="Quận/Huyện"
-        name="district"
+        name="businessAddressDistrict"
         validateTrigger="onBlur"
         rules={[{ required: true, message: "Quận/Huyện không được trống" }]}
         style={{ marginBottom: 20, textAlign: "left" }}
@@ -109,7 +113,7 @@ const StoreFaxFormItem = () => {
 
       <Form.Item
         label="Phường/Xã"
-        name="ward"
+        name="businessAddressWard"
         validateTrigger="onBlur"
         rules={[{ required: true, message: "Phường/Xã không được trống" }]}
         style={{ marginBottom: 20, textAlign: "left" }}
@@ -130,7 +134,7 @@ const StoreFaxFormItem = () => {
 
       <Form.Item
         label="Địa chỉ cụ thể"
-        name="faxAddress"
+        name="businessAddressStreet"
         validateTrigger="onBlur"
         rules={[{ required: true, message: "Địa chỉ cụ thể không được trống" }]}
         style={{ marginBottom: 20, textAlign: "left" }}
