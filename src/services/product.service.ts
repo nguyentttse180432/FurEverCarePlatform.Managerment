@@ -6,8 +6,13 @@ import { IResponse } from '../types/IResponse';
 const BASE_URL = '/product';
 
 // Get all products
-export const getProducts = async (): Promise<IResponse<IProduct>> => {
-  const response: AxiosResponse<IResponse<IProduct>> = await client.get(BASE_URL);
+export const getProducts = async (pageNumber: number, pageSize: number): Promise<IResponse<IProduct>> => {
+  const response: AxiosResponse<IResponse<IProduct>> = await client.get(BASE_URL, {
+    params: {
+      pageNumber,
+      pageSize
+    }
+  });
   return response.data;
 };
 

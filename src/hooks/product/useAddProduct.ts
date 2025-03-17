@@ -9,8 +9,7 @@ export const useAddProduct = () => {
       mutationFn: (product: IAddProduct) => addProduct(product),
       onSuccess: (product: IAddProduct) => {
         queryClient.invalidateQueries({ queryKey: ["products"] });
-        navigate("/product", { replace: true });
-        console.log("User added successfully", product);
+        navigate("/products", { replace: true });
       },
     });
   };
