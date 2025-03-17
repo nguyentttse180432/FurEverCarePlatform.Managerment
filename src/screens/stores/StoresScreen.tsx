@@ -19,13 +19,13 @@ import { IStore } from "../../types/IStore";
 import StoreDetail from "../../components/features/stores/StoreDetail";
 import { useQueryClient } from "@tanstack/react-query";
 
-interface DataType {
-  key: string;
-  name: string;
-  age: number;
-  address: string;
-  tags: string[];
-}
+// interface DataType {
+//   key: string;
+//   name: string;
+//   age: number;
+//   address: string;
+//   tags: string[];
+// }
 
 // const data: DataType[] = [
 //   {
