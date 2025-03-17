@@ -1,11 +1,11 @@
 import React from 'react';
 import { Form, Input, Switch, Select, Button, Space, InputNumber } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Product } from '../../types/Product';
+import { IAddProduct } from '../../types/IProduct';
 
 interface ProductFormProps {
-  onSubmit: (values: Product) => void;
-  initialValues?: Partial<Product>;
+  onSubmit: (values: IAddProduct) => void;
+  initialValues?: Partial<IAddProduct>;
   categories: { id: string; name: string }[];
   brands: { id: string; name: string }[];
   stores: { id: string; name: string }[];

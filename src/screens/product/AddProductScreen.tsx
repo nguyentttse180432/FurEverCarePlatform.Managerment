@@ -2,13 +2,13 @@ import React from 'react';
 import { Card, message } from 'antd';
 import { UseMutationResult } from '@tanstack/react-query';
 import ProductForm from '../../components/features/product/ProductForm';
-import { Product } from '../../types/Product';
+import { IAddProduct } from '../../types/IProduct';
 import { useAddProduct } from '../../hooks/product/useAddProduct';
 
 const AddProductScreen: React.FC = () => {
   const { mutate: addProduct, isPending } = useAddProduct();
 
-  const handleSubmit = async (values: Product) => {
+  const handleSubmit = async (values: IAddProduct) => {
     try {
       await addProduct(values);
       message.success('Product added successfully');

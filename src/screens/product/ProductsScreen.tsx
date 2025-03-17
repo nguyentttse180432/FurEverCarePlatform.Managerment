@@ -5,49 +5,48 @@ import {
     Space,
     Table,
     TableProps,
-    Tag,
     Tooltip,
     Typography,
+    message,
 } from "antd";
 import { useEffect, useState } from "react";
 import { colors } from "../../constants/colors";
 import { AiOutlinePlus } from "react-icons/ai";
 import { AiOutlineReload } from "react-icons/ai";
-
-interface DataType {
-    id: string;
-    name: string;
-    productCode: string;
-    brandName: string;
-    storeName: string;
-    categoryName: string;
-    minPrices: number;
-}
-
-const data: DataType[] = [
-    {
-        id: "c388a266-c465-4ca0-1566-08dd6374dc34",
-        name: "hạt cho mèo",
-        productCode: "21233",
-        brandName: "PetCare",
-        storeName: "Pet World",
-        categoryName: "toy",
-        minPrices: 120000,
-    },
-    {
-        id: "e0f01762-f5b3-4161-d95c-08dd641b9320",
-        name: "Sup thuong cho cho connn",
-        productCode: "123",
-        brandName: "PetFoods",
-        storeName: "Pet World",
-        categoryName: "toy",
-        minPrices: 120000,
-    },
-];
-
+import { IProduct } from "../../types/IProduct";
+import { getProducts } from "../../services/product.service";
+import { useNavigate } from "react-router";
+import { AiTwotoneEye } from "react-icons/ai";
 
 const ProductsScreen = () => {
-    const columns: TableProps<DataType>["columns"] = [
+    const navigate = useNavigate();
+    const [products, setProducts] = useState<IProduct[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [openViewDrawer, setOpenViewDrawer] = useState<boolean>(false);
+    const [isDrawerLoading, setIsDrawerLoading] = useState<boolean>(false);
+
+    const fetchProducts = async () => {
+        setLoading(true);
+        try {
+            const data = await getProducts();
+            setProducts(data.items);
+        } catch (error) {
+            message.error("Failed to fetch products");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchProducts();
+        document.title = "Store Management";
+    }, []);
+
+    const showLoading = () => {
+        navigate("add-product", { replace: true });
+    };
+
+    const columns: TableProps<IProduct>["columns"] = [
         {
             title: "Name",
             dataIndex: "name",
@@ -83,31 +82,15 @@ const ProductsScreen = () => {
             title: "Action",
             key: "action",
             width: "15%",
-            render: (_) => (
+            render: (item) => (
                 <Space size="middle">
-                    <a onClick={showLoading}>View</a>
-                    <a>Update</a>
-                    <a>Delete</a>
+                    <AiTwotoneEye size={20}
+                        onClick={() => navigate(`${item.id}`, { replace: true })}
+                    />
                 </Space>
             ),
         },
     ];
-    const [openViewDrawer, setOpenViewDrawer] = useState<boolean>(false);
-    const [isDrawerLoading, setIsDrawerLoading] = useState<boolean>(false);
-
-    const showLoading = () => {
-        setOpenViewDrawer(true);
-        setIsDrawerLoading(true);
-
-        // Simple loading mock. You should add cleanup logic in real world.
-        setTimeout(() => {
-            setIsDrawerLoading(false);
-        }, 500);
-    };
-
-    useEffect(() => {
-        document.title = "Store Management";
-    }, []);
 
     return (
         <>
@@ -135,21 +118,25 @@ const ProductsScreen = () => {
                                 type="primary"
                                 style={{ marginLeft: "auto", marginRight: 10 }}
                                 icon={<AiOutlinePlus />}
+                                onClick={() => navigate("add-product", {replace: true})}
                             >
-                                Add Store
+                                Add Product
                             </Button>
                             <Tooltip title="Reload">
                                 <Button
                                     type="primary"
                                     shape="circle"
                                     icon={<AiOutlineReload />}
+                                    onClick={fetchProducts}
+                                    loading={loading}
                                 />
                             </Tooltip>
                         </div>
                     </Flex>
-                    <Table<DataType>
+                    <Table<IProduct>
                         columns={columns}
-                        dataSource={data}
+                        dataSource={products}
+                        loading={loading}
                         style={{ width: "100%" }}
                     />
                 </div>

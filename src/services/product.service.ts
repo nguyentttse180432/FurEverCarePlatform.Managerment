@@ -1,30 +1,31 @@
 import { AxiosResponse } from 'axios';
 import { client } from './clients';
-import { Product } from '../types/Product';
+import { IAddProduct, IProduct, IProductDetail } from '../types/IProduct';
+import { IResponse } from '../types/IResponse';
 
-const BASE_URL = 'http://localhost:5225/api/v1/product';
+const BASE_URL = '/product';
 
 // Get all products
-export const getProducts = async (): Promise<Product[]> => {
-  const response: AxiosResponse<Product[]> = await client.get(BASE_URL);
+export const getProducts = async (): Promise<IResponse<IProduct>> => {
+  const response: AxiosResponse<IResponse<IProduct>> = await client.get(BASE_URL);
   return response.data;
 };
 
 // Get a single product by ID
-export const getProductById = async (id: string): Promise<Product> => {
-  const response: AxiosResponse<Product> = await client.get(`${BASE_URL}/${id}`);
+export const getProductById = async (id: string): Promise<IProductDetail> => {
+  const response: AxiosResponse<IProductDetail> = await client.get(`${BASE_URL}/${id}`);
   return response.data;
 };
 
 // Add a new product
-export const addProduct = async (product: Product): Promise<Product> => {
-  const response: AxiosResponse<Product> = await client.post(BASE_URL, product);
+export const addProduct = async (product: IAddProduct): Promise<IAddProduct> => {
+  const response: AxiosResponse<IAddProduct> = await client.post(BASE_URL, product);
   return response.data;
 };
 
 // Update a product
-export const updateProduct = async (id: string, product: Product): Promise<Product> => {
-  const response: AxiosResponse<Product> = await client.put(`${BASE_URL}/${id}`, product);
+export const updateProduct = async (id: string, product: IAddProduct): Promise<IAddProduct> => {
+  const response: AxiosResponse<IAddProduct> = await client.put(`${BASE_URL}/${id}`, product);
   return response.data;
 };
 
@@ -34,32 +35,32 @@ export const deleteProduct = async (id: string): Promise<void> => {
 };
 
 // Update product status (active/inactive)
-export const updateProductStatus = async (id: string, isActive: boolean): Promise<Product> => {
-  const response: AxiosResponse<Product> = await client.patch(`${BASE_URL}/${id}/status`, { isActive });
+export const updateProductStatus = async (id: string, isActive: boolean): Promise<IAddProduct> => {
+  const response: AxiosResponse<IAddProduct> = await client.patch(`${BASE_URL}/${id}/status`, { isActive });
   return response.data;
 };
 
 // Get products by category
-export const getProductsByCategory = async (categoryId: string): Promise<Product[]> => {
-  const response: AxiosResponse<Product[]> = await client.get(`${BASE_URL}/category/${categoryId}`);
+export const getProductsByCategory = async (categoryId: string): Promise<IAddProduct[]> => {
+  const response: AxiosResponse<IAddProduct[]> = await client.get(`${BASE_URL}/category/${categoryId}`);
   return response.data;
 };
 
 // Get products by store
-export const getProductsByStore = async (storeId: string): Promise<Product[]> => {
-  const response: AxiosResponse<Product[]> = await client.get(`${BASE_URL}/store/${storeId}`);
+export const getProductsByStore = async (storeId: string): Promise<IAddProduct[]> => {
+  const response: AxiosResponse<IAddProduct[]> = await client.get(`${BASE_URL}/store/${storeId}`);
   return response.data;
 };
 
 // Get products by brand
-export const getProductsByBrand = async (brandId: string): Promise<Product[]> => {
-  const response: AxiosResponse<Product[]> = await client.get(`${BASE_URL}/brand/${brandId}`);
+export const getProductsByBrand = async (brandId: string): Promise<IAddProduct[]> => {
+  const response: AxiosResponse<IAddProduct[]> = await client.get(`${BASE_URL}/brand/${brandId}`);
   return response.data;
 };
 
 // Search products
-export const searchProducts = async (query: string): Promise<Product[]> => {
-  const response: AxiosResponse<Product[]> = await client.get(`${BASE_URL}/search`, {
+export const searchProducts = async (query: string): Promise<IAddProduct[]> => {
+  const response: AxiosResponse<IAddProduct[]> = await client.get(`${BASE_URL}/search`, {
     params: { q: query }
   });
   return response.data;
@@ -70,8 +71,8 @@ export const updateProductInventory = async (
   productId: string, 
   priceId: string, 
   inventory: number
-): Promise<Product> => {
-  const response: AxiosResponse<Product> = await client.patch(
+): Promise<IAddProduct> => {
+  const response: AxiosResponse<IAddProduct> = await client.patch(
     `${BASE_URL}/${productId}/prices/${priceId}/inventory`,
     { inventory }
   );
@@ -83,8 +84,8 @@ export const updateProductPrice = async (
   productId: string,
   priceId: string,
   price: number
-): Promise<Product> => {
-  const response: AxiosResponse<Product> = await client.patch(
+): Promise<IAddProduct> => {
+  const response: AxiosResponse<IAddProduct> = await client.patch(
     `${BASE_URL}/${productId}/prices/${priceId}/price`,
     { price }
   );
@@ -106,8 +107,8 @@ export const getProductStats = async (productId: string): Promise<{
 };
 
 // Bulk update products
-export const bulkUpdateProducts = async (products: Product[]): Promise<Product[]> => {
-  const response: AxiosResponse<Product[]> = await client.put(`${BASE_URL}/bulk`, products);
+export const bulkUpdateProducts = async (products: IAddProduct[]): Promise<IAddProduct[]> => {
+  const response: AxiosResponse<IAddProduct[]> = await client.put(`${BASE_URL}/bulk`, products);
   return response.data;
 };
 
@@ -169,4 +170,4 @@ export const handleProductError = (error: any): string => {
   }
 };
 
-export type { Product };
+export type { IAddProduct as Product };
