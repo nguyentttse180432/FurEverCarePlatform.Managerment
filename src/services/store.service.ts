@@ -1,5 +1,5 @@
 import { IResponse } from "../types/IResponse";
-import { IStore } from "../types/IStore";
+import { IStore, IStoreAddress } from "../types/IStore";
 import { client } from "./clients";
 
 export const getAllStores = async () => {
@@ -12,8 +12,8 @@ export const getStore = async (id: string) => {
   return response.data;
 };
 
-export const addStore = async (store: IStore) => {
-  const response = await client.post<IStore>("/store", store);
+export const addStore = async (store: any) => {
+  const response = await client.post("/store", store);
   return response.data;
 };
 
@@ -24,5 +24,10 @@ export const updateStore = async (store: IStore) => {
 
 export const deleteStore = async (id: number) => {
   const response = await client.delete<IStore>(`/store/${id}`);
+  return response.data;
+};
+
+export const getStoreAddress = async () => {
+  const response = await client.get<IStoreAddress[]>(`/store/addresses`);
   return response.data;
 };

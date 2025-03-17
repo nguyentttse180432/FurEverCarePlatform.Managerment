@@ -14,3 +14,8 @@ export interface IStore {
   frontIdentityCardUrl: string;
   backIdentityCardUrl: string;
 }
+
+export interface IStoreAddress {
+  id: string;
+  addressFullPath: string;
+}

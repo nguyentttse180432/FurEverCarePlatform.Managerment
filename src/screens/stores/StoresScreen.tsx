@@ -17,6 +17,7 @@ import { useNavigate } from "react-router";
 import useFetchStores from "../../hooks/store/useFetchStores";
 import { IStore } from "../../types/IStore";
 import StoreDetail from "../../components/features/stores/StoreDetail";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface DataType {
   key: string;
@@ -120,6 +121,7 @@ const StoresScreen = () => {
   );
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const showLoading = (id: string) => {
     setOpenViewDrawer(true);
@@ -136,11 +138,12 @@ const StoresScreen = () => {
     document.title = "Store Management";
   }, []);
 
-  const { data: storeResponse, isLoading, isError, status } = useFetchStores();
-
-  if (status == "success") {
-    console.log(storeResponse);
-  }
+  const {
+    data: storeResponse,
+    isLoading,
+    isError,
+    isFetching,
+  } = useFetchStores();
 
   return (
     <>
@@ -189,17 +192,22 @@ const StoresScreen = () => {
                   type="primary"
                   shape="circle"
                   icon={<AiOutlineReload />}
+                  onClick={() => {
+                    queryClient.invalidateQueries({ queryKey: ["stores"] });
+                  }}
                 />
               </Tooltip>
             </div>
           </Flex>
           {isLoading && <Spin />}
           {isError && <p>Something went wrong</p>}
-          <Table<IStore>
-            columns={columns}
-            dataSource={storeResponse?.items}
-            style={{ width: "100%" }}
-          />
+          <Spin spinning={isFetching}>
+            <Table<IStore>
+              columns={columns}
+              dataSource={storeResponse?.items}
+              style={{ width: "100%" }}
+            />
+          </Spin>
         </div>
       </Space>
       <Drawer

@@ -1,5 +1,6 @@
-import { Form, Input, message, Upload, UploadProps } from "antd";
-import { AiOutlineCloudUpload } from "react-icons/ai";
+import { Form, Input, message, Select, Upload, UploadProps } from "antd";
+import { useEffect, useState } from "react";
+import { getStoreAddress } from "../../../services/store.service";
 
 const { Dragger } = Upload;
 const props: UploadProps = {
@@ -23,11 +24,26 @@ const props: UploadProps = {
   },
 };
 const StoreInfoFormItem = () => {
+  const [addresses, setAddresses] = useState<
+    { value: string; label: string }[]
+  >([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getStoreAddress();
+      const addressOptions = data.map((address) => ({
+        value: address.id,
+        label: address.addressFullPath,
+      }));
+      setAddresses(addressOptions);
+    };
+    fetchData();
+  }, []);
+
   return (
     <div style={{ margin: "0 auto", width: "70%", padding: "40px 0px" }}>
       <Form.Item
         label="Tên cửa hàng"
-        name="storeName"
+        name="name"
         validateTrigger="onBlur"
         rules={[
           { required: true, message: "Tên cửa hàng không được trống" },
@@ -37,7 +53,7 @@ const StoreInfoFormItem = () => {
       >
         <Input showCount maxLength={20} placeholder="Nhập tên cửa hàng" />
       </Form.Item>
-      <Form.Item
+      {/* <Form.Item
         label="Địa chỉ lấy hàng"
         name="storeAddress"
         validateTrigger="onBlur"
@@ -48,10 +64,27 @@ const StoreInfoFormItem = () => {
         style={{ marginBottom: 20, textAlign: "left" }}
       >
         <Input showCount maxLength={100} placeholder="Nhập địa chỉ lấy hàng" />
+      </Form.Item> */}
+
+      <Form.Item
+        label="Địa chỉ lấy hàng"
+        name="addressId"
+        validateTrigger="onBlur"
+        rules={[
+          { required: true, message: "Địa chỉ lấy hàng không được trống" },
+        ]}
+        style={{ marginBottom: 20, textAlign: "left" }}
+      >
+        <Select
+          showSearch
+          placeholder="Chọn địa chỉ lấy hàng"
+          options={addresses}
+        />
       </Form.Item>
+
       <Form.Item
         label="Số điện thoại"
-        name="storePhone"
+        name="hotline"
         validateTrigger="onBlur"
         rules={[
           { required: true, message: "Số điện thoại không được trống" },
@@ -65,7 +98,7 @@ const StoreInfoFormItem = () => {
       >
         <Input placeholder="Nhập số điện thoại" />
       </Form.Item>
-      <Form.Item
+      {/* <Form.Item
         label="Email"
         name="storeEmail"
         validateTrigger="onBlur"
@@ -77,11 +110,11 @@ const StoreInfoFormItem = () => {
         style={{ marginBottom: 20, textAlign: "left" }}
       >
         <Input showCount maxLength={50} placeholder="Nhập email" />
-      </Form.Item>
+      </Form.Item> */}
 
-      <Form.Item
+      {/* <Form.Item
         label="Store Logo"
-        name="storeLogo"
+        name="logoUrl"
         style={{ marginBottom: 20, textAlign: "left" }}
       >
         <Dragger {...props}>
@@ -97,11 +130,11 @@ const StoreInfoFormItem = () => {
           </p>
         </Dragger>
       </Form.Item>
-      <Form.Item name="storeLogo" hidden>
+      <Form.Item name="logoUrl" hidden>
         <Input hidden value="asdfsd" />
-      </Form.Item>
+      </Form.Item> */}
 
-      <Form.Item
+      {/* <Form.Item
         label="Store Banner"
         style={{ marginBottom: 0, textAlign: "left" }}
       >
@@ -118,9 +151,9 @@ const StoreInfoFormItem = () => {
           </p>
         </Dragger>
       </Form.Item>
-      <Form.Item name="storeBanner" hidden>
+      <Form.Item name="bannerUrl" hidden>
         <Input hidden value="asdfsd" />
-      </Form.Item>
+      </Form.Item> */}
     </div>
   );
 };

@@ -1,6 +1,5 @@
 import { Form, Input, message, Radio, Upload, UploadProps } from "antd";
 import { useState } from "react";
-import { AiOutlineCloudUpload } from "react-icons/ai";
 const { Dragger } = Upload;
 const props: UploadProps = {
   name: "file",
@@ -24,7 +23,9 @@ const props: UploadProps = {
 };
 
 const StoreIdentityFormItem = () => {
-  const [identityTypeName, setIdentityTypeName] = useState<string>("");
+  const [identityTypeName, setIdentityTypeName] = useState<string>(
+    "Căn cước công dân (CCCD)"
+  );
 
   function changeIdentity(value: string): void {
     if (value === "newIdentity") {
@@ -40,7 +41,11 @@ const StoreIdentityFormItem = () => {
 
   return (
     <div style={{ margin: "0 auto", width: "70%", padding: "40px 0px" }}>
-      <Form.Item label="Hình thức định danh" name="identityType">
+      <Form.Item
+        label="Hình thức định danh"
+        name="identityType"
+        initialValue={"newIdentity"}
+      >
         <Radio.Group
           style={{ textAlign: "left" }}
           defaultValue="newIdentity"
@@ -60,13 +65,17 @@ const StoreIdentityFormItem = () => {
             required: true,
             message: `Số ${identityTypeName} không được trống`,
           },
+          {
+            pattern: /^[0-9]{9,12}$/,
+            message: `Số ${identityTypeName} không hợp lệ`,
+          },
         ]}
         style={{ marginBottom: 20, textAlign: "left" }}
       >
         <Input placeholder={`Nhập số ${identityTypeName}`} />
       </Form.Item>
 
-      <Form.Item
+      {/* <Form.Item
         label="Hình chụp mặt trước của thẻ CMND/CCCD/Hộ chiếu"
         style={{ marginBottom: 20, textAlign: "left" }}
       >
@@ -85,9 +94,9 @@ const StoreIdentityFormItem = () => {
       </Form.Item>
       <Form.Item name="frontIdetityCard" hidden>
         <Input hidden value="url here" />
-      </Form.Item>
+      </Form.Item> */}
 
-      <Form.Item
+      {/* <Form.Item
         label="Hình chụp mặt sau của thẻ CMND/CCCD/Hộ chiếu"
         style={{ marginBottom: 0, textAlign: "left" }}
       >
@@ -106,7 +115,7 @@ const StoreIdentityFormItem = () => {
       </Form.Item>
       <Form.Item name="backIdentityCard" hidden>
         <Input hidden value="url here" />
-      </Form.Item>
+      </Form.Item> */}
     </div>
   );
 };

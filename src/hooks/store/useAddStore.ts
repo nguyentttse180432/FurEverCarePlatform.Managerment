@@ -1,16 +1,19 @@
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { addStore } from "../../services/store.service";
-import { IStore } from "../../types/IStore";
 
-const useAddStore = () => {
-  const queryClient = useQueryClient();
+export const useAddStore = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (store: IStore) => addStore(store),
-    onSuccess: (store: IStore) => {
-      queryClient.invalidateQueries({ queryKey: ["stores"] });
+    mutationFn: (store) => addStore(store),
+    onSuccess: () => {
       navigate("/stores", { replace: true });
+
+      queryClient.invalidateQueries({ queryKey: ["stores"] });
+    },
+    onError: (error) => {
+      console.log("Add store failed", error);
     },
   });
 };

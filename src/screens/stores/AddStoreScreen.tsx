@@ -1,11 +1,12 @@
-import { Button, Form, Space, Steps, theme, Typography } from "antd";
+import { Button, Form, Space, Spin, Steps, theme, Typography } from "antd";
 import { colors } from "../../constants/colors";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StoreInfoFormItem from "../../components/features/stores/StoreInfoFormItem";
 import StoreFaxFormItem from "../../components/features/stores/StoreFaxFormItem";
 import StoreIdentityFormItem from "../../components/features/stores/StoreIdentityFormItem";
 import StoreFinalCheck from "../../components/features/stores/StoreFinalCheck";
 import { useNavigate } from "react-router";
+import { useAddStore } from "../../hooks/store/useAddStore";
 const steps = [
   {
     title: "Thông tin cửa hàng",
@@ -27,6 +28,10 @@ const steps = [
 const AddStoreScreen = () => {
   const { token } = theme.useToken();
   const [current, setCurrent] = useState(0);
+
+  const { mutate, isPending } = useAddStore();
+
+  const [formValues, setFormValues] = useState({});
 
   const next = () => {
     setCurrent(current + 1);
@@ -51,6 +56,15 @@ const AddStoreScreen = () => {
 
   const navigate = useNavigate();
 
+  const [isCurrentFormFieldsValid, setIsCurrentFormFieldsValid] =
+    useState(false);
+
+  useEffect(() => {
+    const isValid =
+      form.isFieldsTouched(true) && form.getFieldsError().length === 0;
+    console.log(isValid);
+  }, [form.isFieldsTouched]);
+
   return (
     <>
       <Space
@@ -72,18 +86,29 @@ const AddStoreScreen = () => {
           }}
         >
           <Steps current={current} items={items} />
-          <Form
-            form={form}
-            labelCol={{ span: 6 }}
-            labelWrap={true}
-            wrapperCol={{ span: 14 }}
-            layout="horizontal"
-            onFinish={(values: any) => {
-              console.log("Received values of form: ", values);
-            }}
-          >
-            <div style={contentStyle}>{steps[current].content}</div>
-          </Form>
+          <Spin spinning={isPending}>
+            <Form
+              form={form}
+              labelCol={{ span: 6 }}
+              labelWrap={true}
+              wrapperCol={{ span: 14 }}
+              layout="horizontal"
+              onFinish={(values) => {
+                const data = {
+                  ...values,
+                  ...formValues,
+                  frontIdentityCardUrl:
+                    "https://th.bing.com/th/id/OIP.4sMsTuOp1LwzLbGH54E9qwHaE1?rs=1&pid=ImgDetMain",
+                  backIdentityCardUrl:
+                    "https://th.bing.com/th/id/OIP.8ZMj9lZJKAvlwAeksWMH3QAAAA?rs=1&pid=ImgDetMain",
+                  addressId: "f9360811-ac86-4521-8bcb-8921f3f3ed08",
+                };
+                mutate(data);
+              }}
+            >
+              <div style={contentStyle}>{steps[current].content}</div>
+            </Form>
+          </Spin>
           <div
             style={{ margin: "20px auto", width: "70%", textAlign: "center" }}
           >
@@ -94,13 +119,22 @@ const AddStoreScreen = () => {
             )}
 
             {current < steps.length - 2 && (
-              <Button type="primary" onClick={() => next()}>
+              <Button
+                type="primary"
+                onClick={() => {
+                  setFormValues((old) => ({
+                    ...old,
+                    ...form.getFieldsValue(),
+                  }));
+                  next();
+                }}
+              >
                 Next
               </Button>
             )}
 
             {current === steps.length - 2 && (
-              <Button type="primary" onClick={() => next()}>
+              <Button type="primary" onClick={() => form.submit()}>
                 Done
               </Button>
             )}
