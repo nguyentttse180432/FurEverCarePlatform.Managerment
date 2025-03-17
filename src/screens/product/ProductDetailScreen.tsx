@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { 
     Card, 
-    Descriptions, 
-    Tag, 
     Space, 
     Typography, 
-    Divider, 
     Row, 
     Col, 
     Table, 
@@ -19,16 +16,16 @@ import {
     InputNumber,
     Form,
     Select,
-    Modal,
     Popconfirm,
-    Switch
+    Switch,
+    Tag,
+    Divider
 } from "antd";
 import { 
     TagOutlined, 
     ShopOutlined, 
     BarcodeOutlined,
     DollarOutlined,
-    EyeOutlined,
     EditOutlined,
     DeleteOutlined,
     ArrowLeftOutlined,
@@ -39,18 +36,31 @@ import {
 import { useNavigate, useParams } from "react-router";
 import { getProductById, deleteProduct, updateProduct } from "../../services/product.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { IUpdateProduct } from "../../types/IProduct";
+import { IUpdateProduct, ProductTypeDetail, ProductPrice } from "../../types/IProduct";
 
 const { Title, Text } = Typography;
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const ProductDetailScreen: React.FC = () => {
+    const categories = [
+        { id: "E9ED58DF-EFF3-449C-BE72-08DD5F6FD641", name: "Food" },
+        { id: "A6281BBB-22C0-4667-C1C4-08DD636ECAA0", name: "Toy" },
+      ];
+    
+      const brands = [
+        { id: "159141F3-96DA-4051-820E-11FAE16AC3FE", name: "PetCare" },
+        { id: "F45FC4F5-D85F-47B9-AB0B-1BA984388093", name: "AnimalPlanet" },
+      ];
+    
+      const stores = [
+        { id: "BA270842-CA21-4EED-AB5B-3493DED3BC27", name: "Pet World" },
+        { id: "80947517-4F05-4866-B409-6CCBEE5ECEE0", name: "Animal Care Center" },
+      ];
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const queryClient = useQueryClient();
     const [form] = Form.useForm();
     const [isEditing, setIsEditing] = useState(false);
-    const [editingPrice, setEditingPrice] = useState<string | null>(null);
 
     const { 
         data: productDetail,
@@ -96,6 +106,12 @@ const ProductDetailScreen: React.FC = () => {
         }
     }, [productDetail, form]);
 
+    useEffect(() => {
+        if (isEditing && productDetail) {
+            form.setFieldsValue(productDetail);
+        }
+    }, [isEditing, productDetail, form]);
+
     const handleDelete = () => {
         if (id) {
             deleteMutation.mutate(id);
@@ -109,8 +125,28 @@ const ProductDetailScreen: React.FC = () => {
     const handleSave = async () => {
         try {
             const values = await form.validateFields();
+            const { id, ...rest } = productDetail || {}; // Tách id ra khỏi object
+            const productUpdate: IUpdateProduct = {
+                ...rest,
+                id: id || '', // Đảm bảo id luôn là string
+                name: values.name || '', // Đảm bảo name luôn là string
+            
+                // Tìm ID của category, brand, store từ danh sách tương ứng
+                productCategoryId: categories.find(c => c.name.toLocaleLowerCase === values.categoryName.toLocaleLowerCase)?.id || '',
+                brandId: brands.find(b => b.name === values.brandName)?.id || '',
+                storeId: stores.find(s => s.name === values.storeName)?.id || '',
+            
+                isActive: values.isActive ?? false, // Đảm bảo giá trị boolean
+                productCode: values.productCode || '',
+                views: values.views ?? 1, // Nếu `views` là undefined, gán giá trị mặc định là 0
+            
+                productTypes: values.productTypes,
+                productPrices: values.productPrices
+            };
+            
+            
             updateMutation.mutate({
-                ...productDetail,
+                ...productUpdate,
                 ...values
             });
         } catch (error) {
@@ -122,6 +158,53 @@ const ProductDetailScreen: React.FC = () => {
         form.setFieldsValue(productDetail);
         setIsEditing(false);
     };
+
+    const productTypes = Form.useWatch('productTypes', form);
+
+    const priceCombinations = useMemo(() => {
+        if (!productTypes || productTypes.length === 0) return [];
+
+        const combinations: ProductPrice[] = [];
+        
+        const type1 = productTypes[0];
+        const type2 = productTypes[1];
+
+        if (!type1?.productTypeDetails?.length) return [];
+        if (!type2?.productTypeDetails?.length) {
+            return type1.productTypeDetails.map((detail1: ProductTypeDetail) => ({
+                price: 0,
+                inventory: 0,
+                productTypeDetails1: detail1?.name,
+                productTypeDetails2: '',
+            }));
+        } 
+
+        return type1.productTypeDetails.flatMap((detail1: ProductTypeDetail) =>
+            type2.productTypeDetails.map((detail2: ProductTypeDetail) => ({
+                price: 0,
+                inventory: 0,
+                productTypeDetails1: detail1?.name,
+                productTypeDetails2: detail2?.name,
+            }))
+        );
+    }, [productTypes]);
+
+    useEffect(() => {
+        const currentPrices = form.getFieldValue('productPrices') || [];
+        
+        if (JSON.stringify(currentPrices) !== JSON.stringify(priceCombinations)) {
+            const newPrices = priceCombinations.map((combination: ProductPrice) => {
+                const existingPrice = currentPrices.find(
+                    (price: ProductPrice) => 
+                        price.productTypeDetails1 === combination.productTypeDetails1 && 
+                        price.productTypeDetails2 === combination.productTypeDetails2
+                );
+                return existingPrice || combination;
+            });
+
+            form.setFieldsValue({ productPrices: newPrices });
+        }
+    }, [priceCombinations, form]);
 
     if (isLoading) {
         return (
@@ -272,11 +355,13 @@ const ProductDetailScreen: React.FC = () => {
                                         rules={[{ required: true }]}
                                     >
                                         {isEditing ? (
-                                            <Select>
-                                                <Select.Option value={productDetail?.brandName}>
-                                                    {productDetail?.brandName}
-                                                </Select.Option>
-                                            </Select>
+                                            <Select value={brands.find(b => b.name === productDetail?.brandName)?.id}>
+                                            {brands.map((brand) => (
+                                              <Select.Option key={brand.id} value={brand.id}>
+                                                {brand.name}
+                                              </Select.Option>
+                                            ))}
+                                          </Select>
                                         ) : (
                                             <Tag color="blue">{productDetail?.brandName}</Tag>
                                         )}
@@ -289,11 +374,13 @@ const ProductDetailScreen: React.FC = () => {
                                         rules={[{ required: true }]}
                                     >
                                         {isEditing ? (
-                                            <Select>
-                                                <Select.Option value={productDetail?.storeName}>
-                                                    {productDetail?.storeName}
-                                                </Select.Option>
-                                            </Select>
+                                            <Select value={stores.find(b => b.name === productDetail?.storeName)?.id}>
+                                            {stores.map((store) => (
+                                              <Select.Option key={store.id} value={store.id}>
+                                                {store.name}
+                                              </Select.Option>
+                                            ))}
+                                          </Select>
                                         ) : (
                                             <Tag color="green">{productDetail?.storeName}</Tag>
                                         )}
@@ -306,11 +393,13 @@ const ProductDetailScreen: React.FC = () => {
                                         rules={[{ required: true }]}
                                     >
                                         {isEditing ? (
-                                            <Select>
-                                                <Select.Option value={productDetail?.categoryName}>
-                                                    {productDetail?.categoryName}
-                                                </Select.Option>
-                                            </Select>
+                                            <Select value={categories.find(b => b.name === productDetail?.categoryName)?.id}>
+                                            {categories.map((category) => (
+                                              <Select.Option key={category.id} value={category.name}>
+                                                {category.name}
+                                              </Select.Option>
+                                            ))}
+                                          </Select>
                                         ) : (
                                             <Tag color="yellow">{productDetail?.categoryName}</Tag>
                                         )}
@@ -343,11 +432,6 @@ const ProductDetailScreen: React.FC = () => {
                                 </Space>
                             }
                             className="mb-6"
-                            extra={isEditing && (
-                                <Button type="link" onClick={() => {/* Handle edit types */}}>
-                                    Edit Types
-                                </Button>
-                            )}
                         >
                             {isEditing ? (
                                 <Form.List name="productTypes">
@@ -438,73 +522,67 @@ const ProductDetailScreen: React.FC = () => {
                                 </Space>
                             }
                         >
-                            <Table
-                                dataSource={productDetail?.productPrices}
-                                pagination={false}
-                                scroll={{ x: true }}
-                                columns={[
-                                    {
-                                        title: 'Type 1',
-                                        dataIndex: 'productTypeDetails1',
-                                        key: 'productTypeDetails1',
-                                    },
-                                    {
-                                        title: 'Type 2',
-                                        dataIndex: 'productTypeDetails2',
-                                        key: 'productTypeDetails2',
-                                    },
-                                    {
-                                        title: 'Price',
-                                        dataIndex: 'price',
-                                        key: 'price',
-                                        render: (price: number, record: any, index: number) => (
-                                            isEditing ? (
-                                                <Form.Item
-                                                    name={['productPrices', index, 'price']}
-                                                    style={{ margin: 0 }}
-                                                >
-                                                    <InputNumber
-                                                        min={0}
-                                                        style={{ width: '100%' }}
-                                                        formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                                    />
-                                                </Form.Item>
-                                            ) : (
-                                                <Text strong className="text-green-600">
-                                                    ${price.toLocaleString()}
-                                                </Text>
-                                            )
-                                        ),
-                                    },
-                                    {
-                                        title: 'Inventory',
-                                        dataIndex: 'inventory',
-                                        key: 'inventory',
-                                        render: (inventory: number, record: any, index: number) => (
-                                            isEditing ? (
-                                                <Form.Item
-                                                    name={['productPrices', index, 'inventory']}
-                                                    style={{ margin: 0 }}
-                                                >
-                                                    <InputNumber min={0} style={{ width: '100%' }} />
-                                                </Form.Item>
-                                            ) : (
-                                                <Badge 
-                                                    count={inventory} 
-                                                    showZero 
-                                                    color={
-                                                        inventory > 10 
-                                                            ? 'green' 
-                                                            : inventory > 0 
-                                                            ? 'orange' 
-                                                            : 'red'
-                                                    }
-                                                />
-                                            )
-                                        ),
-                                    },
-                                ]}
-                            />
+                            <Form.List name="productPrices">
+                                {(fields, { }) => (
+                                    <>
+                                        <Table
+                                            dataSource={fields.map(field => ({
+                                                ...field,
+                                                key: field.key,
+                                                ...form.getFieldValue(['productPrices', field.name])
+                                            }))}
+                                            pagination={false}
+                                            scroll={{ x: true }}
+                                            columns={[
+                                                {
+                                                    title: 'Type 1',
+                                                    dataIndex: 'productTypeDetails1',
+                                                    key: 'productTypeDetails1',
+                                                },
+                                                {
+                                                    title: 'Type 2',
+                                                    dataIndex: 'productTypeDetails2',
+                                                    key: 'productTypeDetails2',
+                                                },
+                                                {
+                                                    title: 'Price',
+                                                    key: 'price',
+                                                    render: (_, __, index) => (
+                                                        <Form.Item
+                                                            name={[index, 'price']}
+                                                            rules={[{ required: true, message: 'Required' }]}
+                                                            noStyle
+                                                        >
+                                                            <InputNumber
+                                                                min={0}
+                                                                style={{ width: '100%' }}
+                                                                placeholder="Enter price"
+                                                            />
+                                                        </Form.Item>
+                                                    ),
+                                                },
+                                                {
+                                                    title: 'Inventory',
+                                                    key: 'inventory',
+                                                    render: (_, __, index) => (
+                                                        <Form.Item
+                                                            name={[index, 'inventory']}
+                                                            rules={[{ required: true, message: 'Required' }]}
+                                                            noStyle
+                                                        >
+                                                            <InputNumber
+                                                                min={0}
+                                                                style={{ width: '100%' }}
+                                                                placeholder="Enter inventory"
+                                                            />
+                                                        </Form.Item>
+                                                    ),
+                                                }
+                                            ]}
+                                        />
+                                    </>
+                                )}
+                            </Form.List>
                         </Card>
                     </Col>
 

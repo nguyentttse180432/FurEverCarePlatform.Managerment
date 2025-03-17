@@ -10,7 +10,6 @@ export const useAddProduct = () => {
     onSuccess: (product: IAddProduct) => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       navigate("/products", { replace: true });
-      console.log("User added successfully", product);
     },
   });
 };

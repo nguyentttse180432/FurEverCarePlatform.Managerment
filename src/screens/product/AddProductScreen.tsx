@@ -8,16 +8,16 @@ import { useAddProduct } from '../../hooks/product/useAddProduct';
 const AddProductScreen: React.FC = () => {
   const { mutate: addProduct, isPending } = useAddProduct();
 
-  const handleSubmit = async (values: IAddProduct) => {
-    try {
-      await addProduct(values);
-      message.success('Product added successfully');
-    } catch (error) {
-      message.error('Failed to add product');
-    }
-  };
+  // const handleSubmit = async (values: IAddProduct) => {
+  //   try {
+  //     await addProduct(values);
+  //     message.success('Product added successfully');
+  //   } catch (error) {
+  //     message.error('Failed to add product');
+  //   }
+  // };
   const categories = [
-    { id: "E9ED58DF-EFF3-449C-BE72-08DD5F6FD641", name: "Category 1" },
+    { id: "E9ED58DF-EFF3-449C-BE72-08DD5F6FD641", name: "Food" },
     { id: "A6281BBB-22C0-4667-C1C4-08DD636ECAA0", name: "Toy" },
   ];
 
@@ -34,7 +34,7 @@ const AddProductScreen: React.FC = () => {
     <div className="p-6">
       <Card title="Add New Product" loading={isPending}>
         <ProductForm
-          onSubmit={handleSubmit}
+          onSubmit={addProduct}
           categories={categories} 
           brands={brands} 
           stores={stores} 

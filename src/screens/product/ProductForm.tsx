@@ -31,7 +31,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
       {/* Basic Information */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
         <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
-        
+
         <Form.Item
           name="name"
           label="Product Name"
@@ -98,7 +98,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
       {/* Product Types */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
         <h2 className="text-lg font-semibold mb-4">Product Types</h2>
-        
+
         <Form.List name="productTypes">
           {(fields, { add, remove }) => (
             <>
@@ -150,7 +150,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
       {/* Product Prices */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
         <h2 className="text-lg font-semibold mb-4">Product Prices</h2>
-        
+
         <Form.List name="productPrices">
           {(fields, { add, remove }) => (
             <>
@@ -163,7 +163,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
                       label="Price"
                       rules={[{ required: true, message: 'Missing price' }]}
                     >
-                      <InputNumber min={0} />
+                      <InputNumber
+                        min={0}
+                        style={{ width: '100%' }}
+                        formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      />
                     </Form.Item>
 
                     <Form.Item
