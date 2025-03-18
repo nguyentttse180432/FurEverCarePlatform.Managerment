@@ -1,6 +1,6 @@
 import { Form, Input } from "antd";
 
-const StoreInfoFormItem = () => {
+const ServiceOverral = () => {
   return (
     <div style={{ margin: "0 auto", width: "70%", padding: "20px" }}>
       <Form.Item
@@ -19,4 +19,4 @@ const StoreInfoFormItem = () => {
   );
 };
 
-export default StoreInfoFormItem;
+export default ServiceOverral;

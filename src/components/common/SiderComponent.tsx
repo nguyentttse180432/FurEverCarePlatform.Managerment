@@ -6,7 +6,7 @@ import { MdOutlineInventory } from "react-icons/md";
 import { appInfo } from "../../constants/appInfos";
 import { colors } from "../../constants/colors";
 import { TbHome2 } from "react-icons/tb";
-import { AiFillShop } from "react-icons/ai";
+import {AiFillContainer, AiFillShop } from "react-icons/ai";
 import { AiOutlineTable } from "react-icons/ai";
 import { AiOutlineFileAdd } from "react-icons/ai";
 
@@ -38,7 +38,7 @@ const SiderComponent = () => {
     },
     {
       key: "stores",
-      label: "Stores Mangament",
+      label: "Stores Management",
       icon: <AiFillShop size={20} />,
       children: [
         {
@@ -49,6 +49,23 @@ const SiderComponent = () => {
         {
           key: "addNew",
           label: <Link to={`/stores/add-store`}>Add new</Link>,
+          icon: <AiOutlineFileAdd />,
+        },
+      ],
+    },
+    {
+      key: "services",
+      label: "Services Management",
+      icon: <AiFillContainer  size={20} />,
+      children: [
+        {
+          key: "stores",
+          label: <Link to={"/services"}>All</Link>,
+          icon: <AiOutlineTable />,
+        },
+        {
+          key: "addNew",
+          label: <Link to={`/services/add-service`}>Add new</Link>,
           icon: <AiOutlineFileAdd />,
         },
       ],

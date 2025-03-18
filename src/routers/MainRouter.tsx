@@ -11,6 +11,8 @@ import StoresScreen from "../screens/stores/StoresScreen";
 import AddStoreScreen from "../screens/stores/AddStoreScreen";
 import StoreDetailScreen from "../screens/stores/StoreDetailScreen";
 import ServicesScreen from "../screens/services/ServicesScreen.tsx";
+import ServiceDetailScreen from "../screens/services/ServiceDetailScreen.tsx";
+import AddServiceScreen from "../screens/services/AddServiceScreen.tsx";
 const { Content, Footer } = Layout;
 const MainRouter = () => {
   return (
@@ -31,7 +33,12 @@ const MainRouter = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="*" element={<NotFound />} />
-              <Route path="/services" element={<ServicesScreen />} />
+              {/* Service route */}
+              <Route>
+                <Route path="/services" element={<ServicesScreen />} />
+                <Route path="/services/:serviceId" element={<ServiceDetailScreen />} />
+                <Route path="/services/add-service" element={<AddServiceScreen />} />
+              </Route>
               <Route>
                 <Route path="/users" element={<UsersScreen />} />
                 <Route path="/users/add-user" element={<AddUserScreen />} />
