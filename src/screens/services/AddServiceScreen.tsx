@@ -363,7 +363,7 @@ const AddServiceScreen = () => {
                 }}
             >
                 <Steps current={current} items={items} />
-                <div style={{ padding: "16px", border: "1px dashed #ddd" }}>
+                <div style={{ padding: "16px", border: "1px dashed #ddd", marginTop: "16px"}}>
                     {renderContent()}
                 </div>
 

@@ -2,6 +2,8 @@ import React from "react";
 import { Form, Input, Select } from "antd";
 import  useFetchServiceCategories from "../../../hooks/serviceCategories/useFetchServiveCategories.ts";
 import {IServiceCategories} from "../../../types/IServiceCategories.ts";
+import useFetchStores from "../../../hooks/store/useFetchStores.ts";
+import {IStore} from "../../../types/IStore.ts";
 
 interface ServiceOverallProps {
     form: any; // Replace 'any' with the specific type if available
@@ -9,6 +11,7 @@ interface ServiceOverallProps {
 
 const ServiceOverall: React.FC<ServiceOverallProps> = ({ form }) => {
     const { data: serviceCategories, isLoading } = useFetchServiceCategories();
+    const { data: stores } = useFetchStores();
 
     return (
         <Form
@@ -47,7 +50,14 @@ const ServiceOverall: React.FC<ServiceOverallProps> = ({ form }) => {
                 name="storeId"
                 rules={[{ required: true, message: "Please enter the store" }]}
             >
-                <Input />
+                <Select loading={isLoading} placeholder="Select a store">
+                    {stores?.items.map((store: IStore) => (
+                        <Select.Option key={store.id} value={store.id}>
+                            {store.name} - {store.businessAddressDistrict}
+                        </Select.Option>
+                    ))}
+
+                </Select>
             </Form.Item>
 
             <Form.Item
