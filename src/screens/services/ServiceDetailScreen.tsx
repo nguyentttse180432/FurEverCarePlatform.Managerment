@@ -106,7 +106,7 @@ const ServiceDetail: React.FC = () => {
     };
 
 
-    const handleDelete = (detailId: string) => {
+    const handleDelete = (detailId: string | null) => {
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -157,7 +157,7 @@ const ServiceDetail: React.FC = () => {
         });
     };
 
-    const handleDeleteStep = (stepId: string) => {
+    const handleDeleteStep = (stepId: string | null) => {
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",

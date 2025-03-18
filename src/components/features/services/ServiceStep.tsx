@@ -3,7 +3,7 @@ import { Button, Form, Input, Modal, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 interface PetServiceStep {
-    id: number;
+    id: string;
     name: string;
     description: string;
     priority: number;
@@ -35,7 +35,8 @@ const ServiceStep: React.FC<{ serviceData?: any, onUpdateSteps?: (steps: PetServ
                     const parsedSteps = JSON.parse(savedSteps);
                     if (Array.isArray(parsedSteps) && parsedSteps.length > 0) {
                         setSteps(parsedSteps);
-                        const maxId = Math.max(...parsedSteps.map((step: PetServiceStep) => step.id || 0), 0);
+                        const maxId = Math.max(...parsedSteps.map((step: PetServiceStep) =>
+                            step.id ? parseInt(step.id, 10) : 0), 0);
                         setIdCounter(maxId + 1);
                         initialLoadDone.current = true;
                     }
@@ -87,7 +88,7 @@ const ServiceStep: React.FC<{ serviceData?: any, onUpdateSteps?: (steps: PetServ
             .then(values => {
                 const newStep: PetServiceStep = {
                     ...values,
-                    id: editingStep ? editingStep.id : idCounter,
+                    id: editingStep ? editingStep.id : idCounter.toString(),
                     priority: editingStep ? editingStep.priority : steps.length + 1
                 };
 

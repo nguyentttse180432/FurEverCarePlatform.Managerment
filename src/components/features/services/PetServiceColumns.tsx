@@ -22,21 +22,21 @@ export const petServiceColumns = (handleUpdate: (record: PetServiceDetail) => vo
     {
         title: "Pet Weight",
         key: "petWeight",
-        render: (_: never, record: PetServiceDetail) => (
+        render: (_: any, record: PetServiceDetail) => (
             <span>{record.petWeightMin} - {record.petWeightMax} kg</span>
         ),
     },
     {
         title: "Pet Type",
         key: "petType",
-        render: (_: never, record: PetServiceDetail) => (
+        render: (_: any, record: PetServiceDetail) => (
             <Tag color={record.petType ? "green" : "volcano"}>{record.petType ? "Dog" : "Cat"}</Tag>
         ),
     },
     {
         title: "Action",
         key: "action",
-        render: (_: never, record: PetServiceDetail) => (
+        render: (_: any, record: PetServiceDetail) => (
             <Space size="middle">
                 <Button icon={<AiOutlineEdit />} onClick={() => handleUpdate(record)}>
                     Update

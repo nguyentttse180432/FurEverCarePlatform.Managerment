@@ -10,25 +10,33 @@ import { useNavigate } from "react-router";
 
 const NAVIGATION_TIMESTAMP_KEY = 'addServiceNavigationTimestamp';
 
+// Define types for your step content functions
+type ServiceOverallContent = (form: any) => React.ReactNode;
+type ServiceDetailContent = (serviceData: IServiceDetailResponse | null, onUpdateDetails: (details: PetServiceDetail[]) => void) => React.ReactNode;
+type ServiceStepContent = (serviceData: IServiceDetailResponse | null, onUpdateSteps?: (steps: PetServiceStep[]) => void) => React.ReactNode;
+
+// Define a union type for all possible content functions
+type StepContent = ServiceOverallContent | ServiceDetailContent | ServiceStepContent;
+
+// Define your steps array with specific types
 const steps = [
     {
         title: "Service Overall",
-        content: (form: never) => <ServiceOverall form={form} />,
+        content: ((form: any) => <ServiceOverall form={form} />) as ServiceOverallContent,
     },
     {
         title: "Service Detail List",
-        content: (serviceData: never, onUpdateDetails: (details: PetServiceDetail[]) => void) => (
+        content: ((serviceData: IServiceDetailResponse | null, onUpdateDetails: (details: PetServiceDetail[]) => void) => (
             <ServiceDetailList serviceData={serviceData} onUpdateDetails={onUpdateDetails} />
-        ),
+        )) as ServiceDetailContent,
     },
     {
         title: "Service Step List",
-        content: (serviceData: never, onUpdateSteps: (steps: PetServiceStep[]) => void) => (
+        content: ((serviceData: IServiceDetailResponse | null, onUpdateSteps?: (steps: PetServiceStep[]) => void) => (
             <ServiceStep serviceData={serviceData} onUpdateSteps={onUpdateSteps} />
-        ),
+        )) as ServiceStepContent,
     },
 ];
-
 const AddServiceScreen = () => {
     const [current, setCurrent] = useState(0);
     const [form] = Form.useForm();
@@ -217,7 +225,7 @@ const AddServiceScreen = () => {
                 petServiceSteps: existingSteps
             };
 
-            setServiceData(updatedData);
+            setServiceData(updatedData as IServiceDetailResponse);
             localStorage.setItem('addService', JSON.stringify(updatedData));
             setCurrent(current + 1);
         }
@@ -319,23 +327,20 @@ const AddServiceScreen = () => {
     const renderContent = () => {
         const stepContent = steps[current].content;
 
-        if (current === 0 && typeof stepContent === 'function') {
-            return stepContent(form);
+        if (current === 0) {
+            return (stepContent as ServiceOverallContent)(form);
         }
 
-        if (current === 1 && typeof stepContent === 'function') {
-            return stepContent(serviceData, handleUpdateDetails);
+        if (current === 1) {
+            return (stepContent as ServiceDetailContent)(serviceData, handleUpdateDetails);
         }
 
-        if (current === 2 && typeof stepContent === 'function') {
-            return stepContent(serviceData, handleUpdateSteps);
+        if (current === 2) {
+            return (stepContent as ServiceStepContent)(serviceData, handleUpdateSteps);
         }
 
-        if (typeof stepContent === 'function') {
-            return stepContent(serviceData);
-        }
-
-        return stepContent;
+        console.warn("Unknown step content");
+        return null;
     };
 
     return (

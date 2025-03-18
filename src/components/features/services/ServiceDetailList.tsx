@@ -29,7 +29,12 @@ const ServiceDetailList: React.FC<{ serviceData?: any, onUpdateDetails?: (detail
           const parsedDetails = JSON.parse(savedDetails);
           if (Array.isArray(parsedDetails) && parsedDetails.length > 0) {
             setDetails(parsedDetails);
-            const maxId = Math.max(...parsedDetails.map((detail: PetServiceDetail) => detail.id || 0), 0);
+              const maxId = Math.max(
+                  ...parsedDetails.map((detail: PetServiceDetail) =>
+                      detail.id ? parseInt(detail.id, 10) : 0
+                  ),
+                  0
+              );
             setIdCounter(maxId + 1);
             initialLoadDone.current = true;
           }
@@ -71,7 +76,7 @@ const ServiceDetailList: React.FC<{ serviceData?: any, onUpdateDetails?: (detail
         .then(values => {
           const newDetail: PetServiceDetail = {
             ...values,
-            id: editingDetail ? editingDetail.id : idCounter
+            id: editingDetail ? editingDetail.id : idCounter.toString(),
           };
 
           const updatedDetails = editingDetail
@@ -177,7 +182,7 @@ const ServiceDetailList: React.FC<{ serviceData?: any, onUpdateDetails?: (detail
         <Table
             columns={columns}
             dataSource={details}
-            rowKey={record => record.id.toString()}
+            rowKey={record => (record.id ?? '').toString()}
             pagination={false}
         />
 
