@@ -1,8 +1,13 @@
 import axios from "axios";
+const storedData = localStorage.getItem("auth-storage");
+
+const parsedData = JSON.parse(storedData!);
+const accessToken = parsedData?.state.token;
 
 export const client = axios.create({
-    baseURL : 'https://localhost:7246/api/v1',
-    headers: {
-        'Content-Type': 'application/json'
-    }
-})
+  baseURL: `${import.meta.env.VITE_BACKEND_URL}`,
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`, // ✅ Add Authorization header if accessToken exists
+  },
+});

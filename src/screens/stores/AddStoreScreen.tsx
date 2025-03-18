@@ -1,9 +1,12 @@
-import { Button, Form, message, Space, Steps, theme, Typography } from "antd";
+import { Button, Form, Space, Spin, Steps, theme, Typography } from "antd";
 import { colors } from "../../constants/colors";
 import { useState } from "react";
 import StoreInfoFormItem from "../../components/features/stores/StoreInfoFormItem";
 import StoreFaxFormItem from "../../components/features/stores/StoreFaxFormItem";
 import StoreIdentityFormItem from "../../components/features/stores/StoreIdentityFormItem";
+import StoreFinalCheck from "../../components/features/stores/StoreFinalCheck";
+import { useNavigate } from "react-router";
+import { useAddStore } from "../../hooks/store/useAddStore";
 const steps = [
   {
     title: "Thông tin cửa hàng",
@@ -19,12 +22,16 @@ const steps = [
   },
   {
     title: "Hoàn tất",
-    content: "Last-content",
+    content: <StoreFinalCheck />, //Need component to sumary all data
   },
 ];
 const AddStoreScreen = () => {
   const { token } = theme.useToken();
   const [current, setCurrent] = useState(0);
+
+  const { mutate, isPending } = useAddStore();
+
+  const [formValues, setFormValues] = useState({});
 
   const next = () => {
     setCurrent(current + 1);
@@ -37,7 +44,6 @@ const AddStoreScreen = () => {
   const items = steps.map((item) => ({ key: item.title, title: item.title }));
 
   const contentStyle: React.CSSProperties = {
-    lineHeight: "260px",
     textAlign: "center",
     color: token.colorTextTertiary,
     backgroundColor: token.colorFillAlter,
@@ -45,7 +51,11 @@ const AddStoreScreen = () => {
     border: `1px dashed ${token.colorBorder}`,
     marginTop: 16,
   };
+
   const [form] = Form.useForm();
+
+  const navigate = useNavigate();
+
   return (
     <>
       <Space
@@ -67,32 +77,69 @@ const AddStoreScreen = () => {
           }}
         >
           <Steps current={current} items={items} />
-          <Form
-            form={form}
-            layout="horizontal"
-            onFinish={(values: any) => {
-              console.log("Received values of form: ", values);
-            }}
+          <Spin spinning={isPending}>
+            <Form
+              form={form}
+              labelCol={{ span: 6 }}
+              labelWrap={true}
+              wrapperCol={{ span: 14 }}
+              layout="horizontal"
+              onFinish={(values) => {
+                const data = {
+                  ...values,
+                  ...formValues,
+                  frontIdentityCardUrl:
+                    "https://th.bing.com/th/id/OIP.4sMsTuOp1LwzLbGH54E9qwHaE1?rs=1&pid=ImgDetMain",
+                  backIdentityCardUrl:
+                    "https://th.bing.com/th/id/OIP.8ZMj9lZJKAvlwAeksWMH3QAAAA?rs=1&pid=ImgDetMain",
+                  addressId: "f9360811-ac86-4521-8bcb-8921f3f3ed08",
+                };
+                mutate(data);
+              }}
+            >
+              <div style={contentStyle}>{steps[current].content}</div>
+            </Form>
+          </Spin>
+          <div
+            style={{ margin: "20px auto", width: "70%", textAlign: "center" }}
           >
-            <div style={contentStyle}>{steps[current].content}</div>
-          </Form>
-          <div style={{ marginTop: 24 }}>
-            {current < steps.length - 1 && (
-              <Button type="primary" onClick={() => next()}>
+            {current > 0 && current < 3 && (
+              <Button style={{ margin: "0 8px" }} onClick={() => prev()}>
+                Previous
+              </Button>
+            )}
+
+            {current < steps.length - 2 && (
+              <Button
+                type="primary"
+                onClick={() => {
+                  setFormValues((old) => ({
+                    ...old,
+                    ...form.getFieldsValue(),
+                  }));
+                  next();
+                }}
+              >
                 Next
               </Button>
             )}
-            {current === steps.length - 1 && (
-              <Button
-                type="primary"
-                onClick={() => message.success("Processing complete!")}
-              >
+
+            {current === steps.length - 2 && (
+              <Button type="primary" onClick={() => form.submit()}>
                 Done
               </Button>
             )}
-            {current > 0 && (
-              <Button style={{ margin: "0 8px" }} onClick={() => prev()}>
-                Previous
+
+            {current === steps.length - 1 && (
+              <Button
+                type="primary"
+                onClick={() =>
+                  navigate("/stores", {
+                    replace: true,
+                  })
+                }
+              >
+                Cửa hàng của tôi
               </Button>
             )}
           </div>
