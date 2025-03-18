@@ -24,7 +24,7 @@ export const useAuthStore = create<IAuthState>()(
           if (!response.ok) throw new Error("Registration failed");
           const data = await response.json();
 
-          set({ user: data.user, token: data.token });
+          set({ user: data.user, token: data.accessToken });
           localStorage.setItem("auth-storage", JSON.stringify(data));
 
           return true;

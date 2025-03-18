@@ -2,7 +2,7 @@ import axios from "axios";
 const storedData = localStorage.getItem("auth-storage");
 
 const parsedData = JSON.parse(storedData!);
-const accessToken = parsedData?.state.token;
+const accessToken = parsedData?.accessToken;
 
 export const client = axios.create({
   baseURL: `${import.meta.env.VITE_BACKEND_URL}`,
