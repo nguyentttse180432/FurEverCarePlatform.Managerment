@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { IAuthState } from "../types/IAuth";
 
+const authAPI = import.meta.env.VITE_BACKEND_URL;
+
 export const useAuthStore = create<IAuthState>()(
   persist(
     (set) => ({
@@ -11,18 +13,18 @@ export const useAuthStore = create<IAuthState>()(
       // 👇 Thêm setAuth để cập nhật user & token
       setAuth: (user, token) => set({ user, token }),
 
-      register: async ( email, password, name, phone) => {
+      register: async (email, password, name) => {
         try {
-          const response = await fetch("https://localhost:7246/api/Auth/register", {
+          const response = await fetch(`${authAPI}/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({email, password, name, phone }),
+            body: JSON.stringify({ email, password, name }),
           });
 
           if (!response.ok) throw new Error("Registration failed");
           const data = await response.json();
 
-          set({ user: data.user, token: data.token });
+          set({ user: data.user, token: data.accessToken });
           localStorage.setItem("auth-storage", JSON.stringify(data));
 
           return true;
@@ -32,15 +34,15 @@ export const useAuthStore = create<IAuthState>()(
         }
       },
 
-      login: async (emailorPhone, password) => {
+      login: async (emailOrPhone, password) => {
         try {
-          const response = await fetch("https://localhost:7246/api/Auth/login", {
+          const response = await fetch(`${authAPI}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ emailorPhone, password }),
+            body: JSON.stringify({ emailOrPhone, password }),
           });
 
-          if (!response.ok) throw new Error("Login failed");
+          //if (!response.ok) throw new Error("Login failed");
           const data = await response.json();
 
           set({ user: data.user, token: data.token });
@@ -60,13 +62,13 @@ export const useAuthStore = create<IAuthState>()(
 
       updateProfile: async (email, name, password, phone) => {
         try {
-          const response = await fetch("https://localhost:7246/api/Auth/update", {
+          const response = await fetch(`${authAPI}/profile`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${useAuthStore.getState().token}`,
             },
-            body: JSON.stringify({email, name, password, phone }),
+            body: JSON.stringify({ email, name, password, phone }),
           });
 
           if (!response.ok) throw new Error("Update failed");

@@ -1,6 +1,6 @@
 import { Button, Card, Form, Input, message, Typography } from "antd";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useAuthStore } from "../../stores/authStore";
 
 const { Title } = Typography;

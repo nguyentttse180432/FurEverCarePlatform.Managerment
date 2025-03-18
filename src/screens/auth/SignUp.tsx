@@ -1,6 +1,6 @@
 import { Button, Card, Form, Input, message, Typography } from "antd";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { useAuthStore } from "../../stores/authStore";
 import { appInfo } from "../../constants/appInfos";
 
@@ -17,15 +17,9 @@ const SignUp = () => {
     email: string;
     password: string;
     name: string;
-    phone: string;
   }) => {
     setIsLoading(true);
-    const success = await register(
-      values.email,
-      values.password,
-      values.name,
-      values.phone
-    );
+    const success = await register(values.email, values.password, values.name);
 
     if (success) {
       message.success("Sign-up successful! Redirecting to login...");
@@ -76,6 +70,16 @@ const SignUp = () => {
           size="large"
         >
           <Form.Item
+            name="name"
+            label="Full Name"
+            rules={[
+              { required: true, message: "Please enter your full name!" },
+            ]}
+          >
+            <Input placeholder="Enter your full name" allowClear />
+          </Form.Item>
+
+          <Form.Item
             name="email"
             label="Email"
             rules={[{ required: true, message: "Please enter your email!" }]}
@@ -86,16 +90,6 @@ const SignUp = () => {
               maxLength={100}
               type="email"
             />
-          </Form.Item>
-
-          <Form.Item
-            name="name"
-            label="Full Name"
-            rules={[
-              { required: true, message: "Please enter your full name!" },
-            ]}
-          >
-            <Input placeholder="Enter your full name" allowClear />
           </Form.Item>
 
           <Form.Item

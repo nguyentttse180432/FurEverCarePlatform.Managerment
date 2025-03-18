@@ -3,9 +3,9 @@ import {
   Drawer,
   Flex,
   Space,
+  Spin,
   Table,
   TableProps,
-  Tag,
   Tooltip,
   Typography,
 } from "antd";
@@ -13,41 +13,46 @@ import { useEffect, useState } from "react";
 import { colors } from "../../constants/colors";
 import { AiOutlinePlus } from "react-icons/ai";
 import { AiOutlineReload } from "react-icons/ai";
+import { useNavigate } from "react-router";
+import useFetchStores from "../../hooks/store/useFetchStores";
+import { IStore } from "../../types/IStore";
+import StoreDetail from "../../components/features/stores/StoreDetail";
+import { useQueryClient } from "@tanstack/react-query";
 
-interface DataType {
-  key: string;
-  name: string;
-  age: number;
-  address: string;
-  tags: string[];
-}
+// interface DataType {
+//   key: string;
+//   name: string;
+//   age: number;
+//   address: string;
+//   tags: string[];
+// }
 
-const data: DataType[] = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sydney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
+// const data: DataType[] = [
+//   {
+//     key: "1",
+//     name: "John Brown",
+//     age: 32,
+//     address: "New York No. 1 Lake Park",
+//     tags: ["nice", "developer"],
+//   },
+//   {
+//     key: "2",
+//     name: "Jim Green",
+//     age: 42,
+//     address: "London No. 1 Lake Park",
+//     tags: ["loser"],
+//   },
+//   {
+//     key: "3",
+//     name: "Joe Black",
+//     age: 32,
+//     address: "Sydney No. 1 Lake Park",
+//     tags: ["cool", "teacher"],
+//   },
+// ];
 
 const StoresScreen = () => {
-  const columns: TableProps<DataType>["columns"] = [
+  const columns: TableProps<IStore>["columns"] = [
     {
       title: "Name",
       dataIndex: "name",
@@ -55,42 +60,52 @@ const StoresScreen = () => {
       render: (text) => <a>{text}</a>,
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
+      title: "Hotline",
+      dataIndex: "hotline",
+      key: "hotline",
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
+      title: "Business Type",
+      dataIndex: "businessType",
+      key: "businessType",
     },
     {
-      title: "Tags",
-      key: "tags",
-      dataIndex: "tags",
-      render: (_, { tags }) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? "geekblue" : "green";
-            if (tag === "loser") {
-              color = "volcano";
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
+      title: "Fax Code",
+      dataIndex: "faxCode",
+      key: "faxCode",
     },
+    {
+      title: "Fax Email",
+      dataIndex: "faxEmail",
+      key: "faxEmail",
+    },
+    // {
+    //   title: "Tags",
+    //   key: "tags",
+    //   dataIndex: "tags",
+    //   render: (_, { tags }) => (
+    //     <>
+    //       {tags.map((tag) => {
+    //         let color = tag.length > 5 ? "geekblue" : "green";
+    //         if (tag === "loser") {
+    //           color = "volcano";
+    //         }
+    //         return (
+    //           <Tag color={color} key={tag}>
+    //             {tag.toUpperCase()}
+    //           </Tag>
+    //         );
+    //       })}
+    //     </>
+    //   ),
+    // },
     {
       title: "Action",
       key: "action",
       width: "15%",
-      render: (_) => (
+      render: (store: IStore) => (
         <Space size="middle">
-          <a onClick={showLoading}>View</a>
+          <a onClick={() => showLoading(store.id)}>View</a>
           <a>Update</a>
           <a>Delete</a>
         </Space>
@@ -101,9 +116,17 @@ const StoresScreen = () => {
   // const [openUpdateDrawer, setOpenUpdateDrawer] = useState<boolean>(false);
   const [isDrawerLoading, setIsDrawerLoading] = useState<boolean>(false);
 
-  const showLoading = () => {
+  const [selectedStoreId, setSelectedStoreId] = useState<string | undefined>(
+    undefined
+  );
+
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const showLoading = (id: string) => {
     setOpenViewDrawer(true);
     setIsDrawerLoading(true);
+    setSelectedStoreId(id);
 
     // Simple loading mock. You should add cleanup logic in real world.
     setTimeout(() => {
@@ -114,6 +137,13 @@ const StoresScreen = () => {
   useEffect(() => {
     document.title = "Store Management";
   }, []);
+
+  const {
+    data: storeResponse,
+    isLoading,
+    isError,
+    isFetching,
+  } = useFetchStores();
 
   return (
     <>
@@ -153,6 +183,7 @@ const StoresScreen = () => {
                 type="primary"
                 style={{ marginLeft: "auto", marginRight: 10 }}
                 icon={<AiOutlinePlus />}
+                onClick={() => navigate("/stores/add-store", { replace: true })}
               >
                 Add Store
               </Button>
@@ -161,15 +192,22 @@ const StoresScreen = () => {
                   type="primary"
                   shape="circle"
                   icon={<AiOutlineReload />}
+                  onClick={() => {
+                    queryClient.invalidateQueries({ queryKey: ["stores"] });
+                  }}
                 />
               </Tooltip>
             </div>
           </Flex>
-          <Table<DataType>
-            columns={columns}
-            dataSource={data}
-            style={{ width: "100%" }}
-          />
+          {isLoading && <Spin />}
+          {isError && <p>Something went wrong</p>}
+          <Spin spinning={isFetching}>
+            <Table<IStore>
+              columns={columns}
+              dataSource={storeResponse?.items}
+              style={{ width: "100%" }}
+            />
+          </Spin>
         </div>
       </Space>
       <Drawer
@@ -182,16 +220,14 @@ const StoresScreen = () => {
         onClose={() => setOpenViewDrawer(false)}
         width={600}
       >
-        <Button
+        {/* <Button
           type="primary"
           style={{ marginBottom: 16 }}
           onClick={showLoading}
         >
           Reload
-        </Button>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        </Button> */}
+        {selectedStoreId && <StoreDetail id={selectedStoreId} />}
       </Drawer>
     </>
   );

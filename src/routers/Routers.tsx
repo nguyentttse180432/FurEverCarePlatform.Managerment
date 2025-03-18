@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "../stores/authStore"; // Import Zustand store
 import AuthRouter from "./AuthRouter";
 import MainRouter from "./MainRouter";
-import { localDataNames } from "../constants/appInfos";
 import { Spin } from "antd";
 
 const Routers = () => {
@@ -12,12 +11,15 @@ const Routers = () => {
 
   useEffect(() => {
     const getData = () => {
+      console.log("GetDataFromLocalStorage");
       try {
-        const storedData = localStorage.getItem(localDataNames.authData);
+        const storedData = localStorage.getItem("auth-storage"); // ✅ Lấy dữ liệu từ localStorage
+        console.log("Stored data:", storedData);
         if (storedData) {
           const parsedData = JSON.parse(storedData);
-          if (parsedData.token) {
-            setAuth(parsedData.user, parsedData.token); // ✅ Truyền đúng định dạng {user, token}
+          if (parsedData.accessToken) {
+            setAuth(null, parsedData.accessToken); // ✅ Truyền đúng định dạng {user, token}
+            console.log("Parsed auth data:", parsedData);
           }
         }
       } catch (error) {
@@ -29,6 +31,8 @@ const Routers = () => {
 
     getData();
   }, [setAuth]);
+
+  console.log("Token:", token);
 
   return isLoading ? <Spin /> : !token ? <AuthRouter /> : <MainRouter />;
 };

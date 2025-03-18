@@ -10,8 +10,12 @@ import AddUserScreen from "../screens/users/AddUserScreen";
 import StoresScreen from "../screens/stores/StoresScreen";
 import AddStoreScreen from "../screens/stores/AddStoreScreen";
 import StoreDetailScreen from "../screens/stores/StoreDetailScreen";
-
-import UpdateProfile from "../screens/auth/UpdateProfile";
+import ServicesScreen from "../screens/services/ServicesScreen.tsx";
+import ServiceDetailScreen from "../screens/services/ServiceDetailScreen.tsx";
+import AddServiceScreen from "../screens/services/AddServiceScreen.tsx";
+import ProductsScreen from "../screens/product/ProductsScreen.tsx";
+import AddProductScreen from "../screens/product/AddProductScreen.tsx";
+import ProductDetailScreen from "../screens/product/ProductDetailScreen.tsx";
 const { Content, Footer } = Layout;
 const MainRouter = () => {
   return (
@@ -32,7 +36,18 @@ const MainRouter = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="*" element={<NotFound />} />
-              {/* Demo user route */}
+              {/* Service route */}
+              <Route>
+                <Route path="/services" element={<ServicesScreen />} />
+                <Route
+                  path="/services/:serviceId"
+                  element={<ServiceDetailScreen />}
+                />
+                <Route
+                  path="/services/add-service"
+                  element={<AddServiceScreen />}
+                />
+              </Route>
               <Route>
                 <Route path="/users" element={<UsersScreen />} />
                 <Route path="/users/add-user" element={<AddUserScreen />} />
@@ -41,12 +56,20 @@ const MainRouter = () => {
 
               {/* Store route */}
               <Route>
+                <Route path="/products" element={<ProductsScreen />} />
+                <Route
+                  path="/products/add-product"
+                  element={<AddProductScreen />}
+                />
+                <Route path="/products/:id" element={<ProductDetailScreen />} />
+              </Route>
+
+              {/* Store route */}
+              <Route>
                 <Route path="/stores" element={<StoresScreen />} />
                 <Route path="/stores/add-store" element={<AddStoreScreen />} />
                 <Route path="/stores/:id" element={<StoreDetailScreen />} />
               </Route>
-
-              <Route path="/profile" element={<UpdateProfile />} />
 
               {/* Add more route here */}
             </Routes>

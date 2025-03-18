@@ -1,6 +1,6 @@
 import { Button, Card, Checkbox, Form, Input, Typography, message } from "antd";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { useAuthStore } from "../../stores/authStore";
 import { appInfo, localDataNames } from "../../constants/appInfos";
 
@@ -14,11 +14,11 @@ const Login = () => {
   const { login } = useAuthStore();
 
   const handleLogin = async (values: {
-    emailorPhone: string;
+    emailOrPhone: string;
     password: string;
   }) => {
     setIsLoading(true);
-    const success = await login(values.emailorPhone, values.password);
+    const success = await login(values.emailOrPhone, values.password);
 
     if (success) {
       message.success("Login successful!");
@@ -70,7 +70,7 @@ const Login = () => {
 
         <Form layout="vertical" form={form} onFinish={handleLogin} size="large">
           <Form.Item
-            name="emailorPhone"
+            name="emailOrPhone"
             label="Email"
             rules={[{ required: true, message: "Please enter your email!" }]}
           >
