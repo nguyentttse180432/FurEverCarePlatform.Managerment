@@ -10,9 +10,7 @@ import AddUserScreen from "../screens/users/AddUserScreen";
 import StoresScreen from "../screens/stores/StoresScreen";
 import AddStoreScreen from "../screens/stores/AddStoreScreen";
 import StoreDetailScreen from "../screens/stores/StoreDetailScreen";
-import ProductsScreen from "../screens/product/ProductsScreen.tsx";
-import AddProductScreen from "../screens/product/AddProductScreen.tsx";
-import ProductDetailScreen from "../screens/product/ProductDetailScreen.tsx";
+
 const { Content, Footer } = Layout;
 const MainRouter = () => {
   return (
@@ -46,12 +44,7 @@ const MainRouter = () => {
                 <Route path="/stores/add-store" element={<AddStoreScreen />} />
                 <Route path="/stores/:id" element={<StoreDetailScreen />} />
               </Route>
-              {/* Store route */}
-              <Route>
-                <Route path="/products" element={<ProductsScreen />} />
-                <Route path="/products/add-product" element={<AddProductScreen />} />
-                <Route path="/products/:id" element={<ProductDetailScreen />} />
-              </Route>
+
               {/* Add more route here */}
             </Routes>
           </Content>

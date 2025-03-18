@@ -3,7 +3,9 @@ import { IStore, IStoreAddress } from "../types/IStore";
 import { client } from "./clients";
 
 export const getAllStores = async () => {
-  const response = await client.get<IResponse<IStore>>("/store");
+  const response = await client.get<IResponse<IStore>>(
+    "/store?PageNumber=1&PageSize=10"
+  );
   return response.data;
 };
 

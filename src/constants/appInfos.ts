@@ -1,8 +1,8 @@
 export const localDataNames = {
-	authData: 'authData',
+  authData: "auth-storage",
 };
 export const appInfo = {
-	logo: 'https://petstation.vn/upload/hinhanh/logo-2206.png',
-	title: 'FurEver',
-	description: '',
+  logo: "https://petstation.vn/upload/hinhanh/logo-2206.png",
+  title: "FurEver",
+  description: "",
 };
