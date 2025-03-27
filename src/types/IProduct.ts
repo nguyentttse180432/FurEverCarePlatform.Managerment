@@ -39,20 +39,24 @@ export interface IProductDetail {
   categoryName: string;
   name: string;
   isActive: boolean;
-  productCode: string;
+  productDescription: string;
   views: number;
   brandName: string;
   storeName: string;
   productTypes: ProductType[];
   productPrices: ProductPrice[];
+  productImages: IProductImages[];
 }
-
+export interface IProductImages {
+  id: string;
+  url: string;
+}
 export interface IUpdateProduct {
   id: string;
   productCategoryId: string;
   name: string;
   isActive: boolean;
-  productCode: string;
+  productDescription: string;
   views: number;
   brandId: string;
   storeId: string;
