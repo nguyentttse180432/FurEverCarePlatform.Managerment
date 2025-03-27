@@ -74,6 +74,16 @@ const ServicesScreen = () => {
       key: "description",
     },
     {
+      title: "Category",
+      dataIndex: "categoryName",
+      key: "categoryName",
+    },
+    {
+      title: "Store",
+      dataIndex: "storeName",
+      key: "storeName",
+    },
+    {
       title: "Status",
       key: "status",
       render: (_, { status }) => (

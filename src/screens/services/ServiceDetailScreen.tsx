@@ -307,14 +307,6 @@ const ServiceDetail: React.FC = () => {
                         </Tag>
                     </Space>
                 </div>
-
-                <div>
-                    <img
-                        src="https://dreampet.com.vn/wp-content/uploads/2021/07/dich-vu-spa-cho-meo-2.png"
-                        alt="Service Image"
-                        style={{ width: "200px", height: "auto", borderRadius: "8px" }}
-                    />
-                </div>
             </div>
 
             <div style={{ paddingLeft: "5px" }}>
