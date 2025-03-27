@@ -23,14 +23,21 @@ const HeaderComponent = () => {
   const [visibleModalNotification, setVisibleModalNotification] =
     useState<boolean>(false);
 
-  const logout = useAuthStore();
+  const { logout } = useAuthStore();
   const navigate = useNavigate();
   const items: MenuProps["items"] = [
+    {
+      key: "profile",
+      label: "Profile",
+      onClick: () => {
+        navigate("/profile");
+      },
+    },
     {
       key: "logout",
       label: "Đăng xuất",
       onClick: async () => {
-        console.log("Logout");
+        await logout();
         navigate("/");
       },
     },

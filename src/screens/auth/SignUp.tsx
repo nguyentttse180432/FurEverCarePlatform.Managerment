@@ -1,6 +1,6 @@
 import { Button, Card, Form, Input, message, Typography } from "antd";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { appInfo } from "../../constants/appInfos";
 
@@ -8,28 +8,41 @@ const { Title, Text } = Typography;
 
 const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [backendError, setBackendError] = useState<string | null>(null);
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { register } = useAuthStore();
 
   const handleSignUp = async (values: {
-    username: string;
+    name: string;
     email: string;
     password: string;
-    name: string;
+    phone: string;
   }) => {
     setIsLoading(true);
-    const success = await register(values.email, values.password, values.name);
 
-    if (success) {
-      message.success("Sign-up successful! Redirecting to login...");
-      navigate("/login");
-    } else {
-      message.error("Sign-up failed. Please try again.");
+    try {
+      const result = await register(
+        values.email,
+        values.password,
+        values.name,
+        values.phone
+      );
+
+      if (result.success) {
+        message.success("Sign-up successful! Redirecting to login...");
+        navigate("/");
+      } else {
+        // Display the specific error message
+         setBackendError(result.error || "Sign-up failed");
+        message.error(result.error || "Sign-up failed");
+      }
+    } catch (error) {
+      message.error("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
-
   return (
     <div
       style={{
@@ -62,6 +75,21 @@ const SignUp = () => {
           </Title>
           <Text type="secondary">Start your 30-day free trial today.</Text>
         </div>
+
+        {backendError && (
+          <div
+            style={{
+              color: "red",
+              backgroundColor: "#ffecec",
+              padding: "10px",
+              borderRadius: "4px",
+              marginBottom: "16px",
+              textAlign: "center",
+            }}
+          >
+            {backendError}
+          </div>
+        )}
 
         <Form
           layout="vertical"

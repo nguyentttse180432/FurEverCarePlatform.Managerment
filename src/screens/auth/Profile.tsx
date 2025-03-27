@@ -5,7 +5,7 @@ import { useAuthStore } from "../../stores/authStore";
 
 const { Title } = Typography;
 
-const UpdateProfile = () => {
+const Profile = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { user, updateProfile } = useAuthStore();
@@ -21,13 +21,11 @@ const UpdateProfile = () => {
   }, [user, form]);
 
   const handleUpdate = async (values: {
-    email: string;
     name: string;
     password: string;
     phone: string;
   }) => {
     const success = await updateProfile(
-      values.email,
       values.name,
       values.password,
       values.phone
@@ -113,4 +111,4 @@ const UpdateProfile = () => {
   );
 };
 
-export default UpdateProfile;
+export default Profile;

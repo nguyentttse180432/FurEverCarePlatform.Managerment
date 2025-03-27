@@ -16,6 +16,7 @@ import AddServiceScreen from "../screens/services/AddServiceScreen.tsx";
 import ProductsScreen from "../screens/product/ProductsScreen.tsx";
 import AddProductScreen from "../screens/product/AddProductScreen.tsx";
 import ProductDetailScreen from "../screens/product/ProductDetailScreen.tsx";
+import Profile from "../screens/auth/Profile.tsx";
 const { Content, Footer } = Layout;
 const MainRouter = () => {
   return (
@@ -36,6 +37,7 @@ const MainRouter = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="*" element={<NotFound />} />
+              <Route path="/profile" element={<Profile />} />
               
               {/* Service route */}
               <Route>
