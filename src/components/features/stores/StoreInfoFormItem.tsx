@@ -1,29 +1,31 @@
-import { Form, Input, Select } from "antd";
+import {
+  Button,
+  Form,
+  FormInstance,
+  Input,
+  Select,
+  Upload,
+  UploadProps,
+  Image,
+} from "antd";
 import { useEffect, useState } from "react";
 import { getStoreAddress } from "../../../services/store.service";
 
-// const { Dragger } = Upload;
-// const props: UploadProps = {
-//   name: "file",
-//   multiple: true,
-//   action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-//   onChange(info) {
-//     const { status } = info.file;
-//     if (status !== "uploading") {
-//       console.log(">>>> ", info.file.name);
-//       console.log(info.file, info.fileList);
-//     }
-//     if (status === "done") {
-//       message.success(`${info.file.name} file uploaded successfully.`);
-//     } else if (status === "error") {
-//       message.error(`${info.file.name} file upload failed.`);
-//     }
-//   },
-//   onDrop(e) {
-//     console.log("Dropped files", e.dataTransfer.files);
-//   },
-// };
-const StoreInfoFormItem = () => {
+type StoreInforFormItemProps = {
+  form: FormInstance;
+};
+
+const StoreInfoFormItem = (propss: StoreInforFormItemProps) => {
+  const form = propss.form;
+  const props: UploadProps = {
+    action: `${import.meta.env.VITE_BACKEND_URL}/image`,
+    listType: "picture",
+  };
+
+  const [logoUrlLink, setLogoUrlLink] = useState("");
+  const [bannerUrlLink, setBannerUrlLink] = useState("");
+
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [addresses, setAddresses] = useState<
     { value: string; label: string }[]
   >([]);
@@ -53,18 +55,6 @@ const StoreInfoFormItem = () => {
       >
         <Input showCount maxLength={20} placeholder="Nhập tên cửa hàng" />
       </Form.Item>
-      {/* <Form.Item
-        label="Địa chỉ lấy hàng"
-        name="storeAddress"
-        validateTrigger="onBlur"
-        rules={[
-          { required: true, message: "Địa chỉ lấy hàng không được trống" },
-          { max: 100, message: "Địa chỉ lấy hàng không được quá 100 ký tự" },
-        ]}
-        style={{ marginBottom: 20, textAlign: "left" }}
-      >
-        <Input showCount maxLength={100} placeholder="Nhập địa chỉ lấy hàng" />
-      </Form.Item> */}
 
       <Form.Item
         label="Địa chỉ lấy hàng"
@@ -98,62 +88,68 @@ const StoreInfoFormItem = () => {
       >
         <Input placeholder="Nhập số điện thoại" />
       </Form.Item>
-      {/* <Form.Item
-        label="Email"
-        name="storeEmail"
-        validateTrigger="onBlur"
-        rules={[
-          { required: true, message: "Email không được trống" },
-          { max: 50, message: "Email không được quá 50 ký tự" },
-          { type: "email", message: "Email không đúng định dạng" },
-        ]}
-        style={{ marginBottom: 20, textAlign: "left" }}
-      >
-        <Input showCount maxLength={50} placeholder="Nhập email" />
-      </Form.Item> */}
 
-      {/* <Form.Item
+      <Form.Item
         label="Store Logo"
         name="logoUrl"
         style={{ marginBottom: 20, textAlign: "left" }}
       >
-        <Dragger {...props}>
-          <p className="ant-upload-drag-icon">
-            <AiOutlineCloudUpload size={30} />
-          </p>
-          <p className="ant-upload-text">
-            Click or drag file to this area to upload
-          </p>
-          <p className="ant-upload-hint">
-            Support for a single or bulk upload. Strictly prohibited from
-            uploading company data or other banned files.
-          </p>
-        </Dragger>
-      </Form.Item>
-      <Form.Item name="logoUrl" hidden>
-        <Input hidden value="asdfsd" />
-      </Form.Item> */}
+        {!form.getFieldValue("bannerUrl") && (
+          <Upload
+            {...props}
+            onChange={(info) => {
+              const { status, response } = info.file;
 
-      {/* <Form.Item
+              const event = info.event;
+              if (status === "done" && response) {
+                setLogoUrlLink(response);
+                form.setFieldsValue({
+                  ...form.getFieldsValue(), // Retain existing values
+                  logoUrl: response, // Update only logoUrl
+                });
+              }
+            }}
+          >
+            <Button>Upload</Button>
+          </Upload>
+        )}
+        {form.getFieldValue("logoUrl") && (
+          <Image src={form.getFieldValue("logoUrl")} />
+        )}
+      </Form.Item>
+
+      <Form.Item
         label="Store Banner"
+        name="bannerUrl"
         style={{ marginBottom: 0, textAlign: "left" }}
       >
-        <Dragger {...props}>
-          <p className="ant-upload-drag-icon">
-            <AiOutlineCloudUpload size={30} />
-          </p>
-          <p className="ant-upload-text">
-            Click or drag file to this area to upload
-          </p>
-          <p className="ant-upload-hint">
-            Support for a single or bulk upload. Strictly prohibited from
-            uploading company data or other banned files.
-          </p>
-        </Dragger>
+        {!form.getFieldValue("bannerUrl") && (
+          <Upload
+            {...props}
+            onChange={(info) => {
+              const { status, response } = info.file;
+
+              const event = info.event;
+              if (status === "done" && response) {
+                setBannerUrlLink(response);
+                form.setFieldsValue({
+                  ...form.getFieldsValue(), // Retain existing values
+                  bannerUrl: response, // Update only logoUrl
+                });
+              }
+            }}
+          >
+            <Button>Upload</Button>
+          </Upload>
+        )}
+        {form.getFieldValue("bannerUrl") && (
+          <Image
+            width={300}
+            height={300}
+            src={form.getFieldValue("bannerUrl")}
+          />
+        )}
       </Form.Item>
-      <Form.Item name="bannerUrl" hidden>
-        <Input hidden value="asdfsd" />
-      </Form.Item> */}
     </div>
   );
 };

@@ -7,24 +7,7 @@ import StoreIdentityFormItem from "../../components/features/stores/StoreIdentit
 import StoreFinalCheck from "../../components/features/stores/StoreFinalCheck";
 import { useNavigate } from "react-router";
 import { useAddStore } from "../../hooks/store/useAddStore";
-const steps = [
-  {
-    title: "Thông tin cửa hàng",
-    content: <StoreInfoFormItem />,
-  },
-  {
-    title: "Thông tin thuế",
-    content: <StoreFaxFormItem />,
-  },
-  {
-    title: "Thông tin định danh",
-    content: <StoreIdentityFormItem />,
-  },
-  {
-    title: "Hoàn tất",
-    content: <StoreFinalCheck />, //Need component to sumary all data
-  },
-];
+
 const AddStoreScreen = () => {
   const { token } = theme.useToken();
   const [current, setCurrent] = useState(0);
@@ -41,6 +24,26 @@ const AddStoreScreen = () => {
     setCurrent(current - 1);
   };
 
+  const [form] = Form.useForm();
+  const steps = [
+    {
+      title: "Thông tin cửa hàng",
+      content: <StoreInfoFormItem form={form} />,
+    },
+    {
+      title: "Thông tin thuế",
+      content: <StoreFaxFormItem />,
+    },
+    {
+      title: "Thông tin định danh",
+      content: <StoreIdentityFormItem />,
+    },
+    {
+      title: "Hoàn tất",
+      content: <StoreFinalCheck />, //Need component to sumary all data
+    },
+  ];
+
   const items = steps.map((item) => ({ key: item.title, title: item.title }));
 
   const contentStyle: React.CSSProperties = {
@@ -51,8 +54,6 @@ const AddStoreScreen = () => {
     border: `1px dashed ${token.colorBorder}`,
     marginTop: 16,
   };
-
-  const [form] = Form.useForm();
 
   const navigate = useNavigate();
 
@@ -113,11 +114,20 @@ const AddStoreScreen = () => {
               <Button
                 type="primary"
                 onClick={() => {
-                  setFormValues((old) => ({
-                    ...old,
-                    ...form.getFieldsValue(),
-                  }));
-                  next();
+                  form
+                    .validateFields()
+                    .then((value) => {
+                      setFormValues((old) => ({
+                        ...old,
+                        ...form.getFieldsValue(),
+                      }));
+
+                      console.log("form valud:::", value);
+                      next();
+                    })
+                    .catch((errorInfor) => {
+                      console.log("Validate field:::", errorInfor);
+                    });
                 }}
               >
                 Next
