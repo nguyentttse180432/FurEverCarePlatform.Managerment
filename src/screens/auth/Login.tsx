@@ -18,8 +18,10 @@ const Login = () => {
     password: string;
   }) => {
     setIsLoading(true);
-    const success = await login(values.emailOrPhone, values.password);
-
+    const { success, error } = await login(
+      values.emailOrPhone,
+      values.password
+    );
     if (success) {
       message.success("Login successful!");
       if (isRemember) {
@@ -30,8 +32,9 @@ const Login = () => {
       }
       navigate("/");
     } else {
-      message.error("Login failed. Please check your credentials.");
+      message.error(error || "Login failed. Please check your credentials.");
     }
+
     setIsLoading(false);
   };
 
