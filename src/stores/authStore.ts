@@ -24,39 +24,39 @@ export const useAuthStore = create<AuthStore>()(
       register: async (email, password, name, phone) => {
         try {
           const response = await fetch(`${authAPI}/Auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name, phone }),
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password, name, phone }),
           });
 
           const data = await response.json();
 
           if (!response.ok) {
-        const errorMessage = 
-          data.errors && data.errors.length > 0 
-            ? data.errors[0] 
-            : "Registration failed";
+            const errorMessage =
+              data.errors && data.errors.length > 0
+                ? data.errors[0]
+                : "Registration failed";
 
-        set({ error: errorMessage });
+            set({ error: errorMessage });
 
-        return { 
-          success: false, 
-          error: errorMessage 
-        };
+            return {
+              success: false,
+              error: errorMessage,
+            };
           }
-          
-          
+
           return { success: true };
         } catch (error) {
-          const errorMessage = error instanceof Error 
-        ? error.message 
-        : "An unexpected error occurred";
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : "An unexpected error occurred";
 
           set({ error: errorMessage });
 
-          return { 
-        success: false, 
-        error: errorMessage 
+          return {
+            success: false,
+            error: errorMessage,
           };
         }
       },
@@ -72,50 +72,56 @@ export const useAuthStore = create<AuthStore>()(
           const data = await response.json();
 
           if (!response.ok) {
-            const errorMessage = 
-              data.errors && data.errors.length > 0 
-                ? data.errors[0] 
+            const errorMessage =
+              data.errors && data.errors.length > 0
+                ? data.errors[0]
                 : "Login failed";
 
             set({ error: errorMessage });
 
-            return { 
-              success: false, 
-              error: errorMessage 
+            return {
+              success: false,
+              error: errorMessage,
             };
           }
 
-          set({ 
-            token: data.accessToken, 
+          set({
+            token: data.accessToken,
             user: data.user,
-            error: null 
+            error: null,
           });
 
-          localStorage.setItem("auth-storage", JSON.stringify({
-            user: data.user,
-            token: data.accessToken
-          }));
+          localStorage.setItem(
+            "auth-storage",
+            JSON.stringify({
+              state: {
+                user: data.user,
+                token: data.accessToken,
+              },
+            })
+          );
 
           return { success: true };
         } catch (error) {
-          const errorMessage = error instanceof Error 
-            ? error.message 
-            : "An unexpected error occurred";
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : "An unexpected error occurred";
 
           set({ error: errorMessage });
 
-          return { 
-            success: false, 
-            error: errorMessage 
+          return {
+            success: false,
+            error: errorMessage,
           };
         }
       },
 
       logout: () => {
-        set({ 
-          user: null, 
-          token: null, 
-          error: null 
+        set({
+          user: null,
+          token: null,
+          error: null,
         });
         localStorage.removeItem("auth-storage");
       },
@@ -125,54 +131,66 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       updateProfile: async (name, password, phone) => {
-  try {
-    const token = get().token;
-    const user = get().user; // Ensure user object is retrieved
-    const users = localStorage.getItem("auth-storage");
-    const userss = users ? JSON.parse(users) : null;
-    console.log(userss);
-    
-    if (!user?.id) {
-      throw new Error("User ID is missing");
-    }
+        try {
+          const token = get().token;
+          const user = get().user; // Ensure user object is retrieved
+          const users = localStorage.getItem("auth-storage");
+          const userss = users ? JSON.parse(users) : null;
+          console.log(userss);
 
-    const response = await fetch(`http://hair-salon-fpt.io.vn/api/v1/Profile/${user.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+          if (!user?.id) {
+            throw new Error("User ID is missing");
+          }
+
+          const response = await fetch(
+            `http://hair-salon-fpt.io.vn/api/v1/Profile/${user.id}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ name, password, phone }),
+            }
+          );
+
+          const text = await response.text();
+          const data = text ? JSON.parse(text) : {};
+
+          if (!response.ok) {
+            const errorMessage = data.errors?.length
+              ? data.errors[0]
+              : "Profile update failed";
+            set({ error: errorMessage });
+            return { success: false, error: errorMessage };
+          }
+
+          set({
+            user: data.user,
+            token: data.token,
+            error: null,
+          });
+
+          localStorage.setItem(
+            "auth-storage",
+            JSON.stringify({
+              state: {
+                user: data.user,
+                token: data.accessToken,
+              },
+            })
+          );
+
+          return { success: true };
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : "An unexpected error occurred";
+          set({ error: errorMessage });
+          return { success: false, error: errorMessage };
+        }
       },
-      body: JSON.stringify({ name, password, phone }),
-    });
-
-    const text = await response.text();
-    const data = text ? JSON.parse(text) : {};
-
-    if (!response.ok) {
-      const errorMessage = data.errors?.length ? data.errors[0] : "Profile update failed";
-      set({ error: errorMessage });
-      return { success: false, error: errorMessage };
-    }
-
-    set({
-      user: data.user,
-      token: data.token,
-      error: null,
-    });
-
-    localStorage.setItem("auth-storage", JSON.stringify({
-      user: data.user,
-      token: data.token
-    }));
-
-    return { success: true };
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
-    set({ error: errorMessage });
-    return { success: false, error: errorMessage };
-  }
-},
-
     }),
     { name: "auth-storage" }
   )

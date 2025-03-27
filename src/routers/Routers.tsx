@@ -17,8 +17,8 @@ const Routers = () => {
         console.log("Stored data:", storedData);
         if (storedData) {
           const parsedData = JSON.parse(storedData);
-          if (parsedData.accessToken) {
-            setAuth(null, parsedData.accessToken); // ✅ Truyền đúng định dạng {user, token}
+          if (parsedData.token) {
+            setAuth(null, parsedData.token); // ✅ Truyền đúng định dạng {user, token}
             console.log("Parsed auth data:", parsedData);
           }
         }
@@ -31,8 +31,6 @@ const Routers = () => {
 
     getData();
   }, [setAuth]);
-
-  console.log("Token:", token);
 
   return isLoading ? <Spin /> : !token ? <AuthRouter /> : <MainRouter />;
 };

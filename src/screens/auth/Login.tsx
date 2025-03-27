@@ -22,12 +22,19 @@ const Login = () => {
       values.emailOrPhone,
       values.password
     );
+    const authStore = useAuthStore.getState();
     if (success) {
       message.success("Login successful!");
       if (isRemember) {
         localStorage.setItem(
           localDataNames.authData,
-          JSON.stringify(useAuthStore.getState())
+          JSON.stringify({
+            state: {
+              user: authStore.user,
+              token: authStore.token,
+              error: authStore.error,
+            },
+          })
         );
       }
       navigate("/");
