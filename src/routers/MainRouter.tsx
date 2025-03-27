@@ -36,6 +36,7 @@ const MainRouter = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="*" element={<NotFound />} />
+              
               {/* Service route */}
               <Route>
                 <Route path="/services" element={<ServicesScreen />} />

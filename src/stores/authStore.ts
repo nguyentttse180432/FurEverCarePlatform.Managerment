@@ -45,8 +45,8 @@ export const useAuthStore = create<IAuthState>()(
           //if (!response.ok) throw new Error("Login failed");
           const data = await response.json();
 
-          set({ user: data.user, token: data.token });
-          localStorage.setItem("auth-storage", JSON.stringify(data));
+          set({ token: data.accessToken });
+          localStorage.setItem("auth-storage", JSON.stringify(data.accessToken));
 
           return true;
         } catch (error) {

@@ -17,11 +17,13 @@ import { Notification, SearchNormal1 } from "iconsax-react";
 import { useNavigate } from "react-router";
 import { colors } from "../../constants/colors";
 import { useState } from "react";
+import { useAuthStore } from "../../stores/authStore";
 
 const HeaderComponent = () => {
   const [visibleModalNotification, setVisibleModalNotification] =
     useState<boolean>(false);
 
+  const logout = useAuthStore();
   const navigate = useNavigate();
   const items: MenuProps["items"] = [
     {
