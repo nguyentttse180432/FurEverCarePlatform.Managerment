@@ -50,6 +50,10 @@ const StoreInfoFormItem = (propss: StoreInforFormItemProps) => {
         rules={[
           { required: true, message: "Tên cửa hàng không được trống" },
           { max: 20, message: "Tên cửa hàng không được quá 20 ký tự" },
+          {
+            pattern: /^[a-zA-Z0-9À-ỹ\s]+$/,
+            message: "Tên sản phẩm không được chứa ký tự đặc biệt",
+          },
         ]}
         style={{ marginBottom: 20, textAlign: "left" }}
       >

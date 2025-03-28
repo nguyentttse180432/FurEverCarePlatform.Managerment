@@ -32,7 +32,13 @@ const ServiceOverall: React.FC<ServiceOverallProps> = ({ form }) => {
       <Form.Item
         label="Service Name"
         name="name"
-        rules={[{ required: true, message: "Please enter the service name" }]}
+        rules={[
+          { required: true, message: "Please enter the service name" },
+          {
+            pattern: /^[a-zA-Z0-9À-ỹ\s]+$/,
+            message: "Tên sản phẩm không được chứa ký tự đặc biệt",
+          },
+        ]}
       >
         <Input />
       </Form.Item>
