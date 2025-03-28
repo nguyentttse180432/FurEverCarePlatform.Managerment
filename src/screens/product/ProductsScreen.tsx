@@ -56,11 +56,6 @@ const ProductsScreen = () => {
       render: (text) => <a>{text}</a>,
     },
     {
-      title: "Product Code",
-      dataIndex: "productCode",
-      key: "productCode",
-    },
-    {
       title: "Brand Name",
       dataIndex: "brandName",
       key: "brandName",
