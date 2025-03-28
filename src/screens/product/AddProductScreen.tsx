@@ -17,18 +17,18 @@ const AddProductScreen: React.FC = () => {
   //   }
   // };
   const categories = [
-    { id: "E9ED58DF-EFF3-449C-BE72-08DD5F6FD641", name: "Food" },
-    { id: "A6281BBB-22C0-4667-C1C4-08DD636ECAA0", name: "Toy" },
+    { id: "8858B173-9D33-4D4A-B7E5-02A1E1AF53B3", name: "Food" },
+    { id: "43715788-0B06-4ACE-92CB-2D1AF7A46B6F", name: "Toy" },
   ];
 
   const brands = [
-    { id: "159141F3-96DA-4051-820E-11FAE16AC3FE", name: "PetCare" },
-    { id: "F45FC4F5-D85F-47B9-AB0B-1BA984388093", name: "AnimalPlanet" },
+    { id: "E9534604-C257-4CC5-9831-03C4E6B1C2FE", name: "PetCare" },
+    { id: "9C9C5050-C1F5-4E39-A522-68825D380355", name: "AnimalPlanet" },
   ];
 
   const stores = [
-    { id: "BA270842-CA21-4EED-AB5B-3493DED3BC27", name: "Pet World" },
-    { id: "80947517-4F05-4866-B409-6CCBEE5ECEE0", name: "Animal Care Center" },
+    { id: "9AAA435C-72F4-4885-B701-42B6DE5FCBD6", name: "Pet World" },
+    { id: "403CC569-69B3-4CC8-9E07-754506E6EF56", name: "Animal Care Center" },
   ];
   return (
     <div className="p-6">

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Form, Input, Switch, Select, Button, Space, InputNumber } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { Form, Input, Switch, Select, Button, Space, InputNumber, Upload } from 'antd';
+import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { IAddProduct } from '../../types/IProduct';
 
 interface ProductFormProps {
@@ -41,11 +41,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
         </Form.Item>
 
         <Form.Item
-          name="productCode"
-          label="Product Code"
-          rules={[{ required: true, message: 'Please enter product code' }]}
+          name="productDescription"
+          label="Product Description"
+          rules={[{ required: true, message: 'Please enter product description' }]}
         >
-          <Input />
+          <Input.TextArea rows={4} />
         </Form.Item>
 
         <Form.Item
@@ -92,6 +92,56 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
         <Form.Item name="isActive" valuePropName="checked" label="Active Status">
           <Switch />
+        </Form.Item>
+      </div>
+      {/* Product Type */}
+      <div className="bg-white p-6 rounded-lg shadow mb-6">
+        <h2 className="text-lg font-semibold mb-4">Product Type</h2>
+
+        <Form.Item
+          name="productType"
+          label="Product Type"
+          rules={[{ required: true, message: 'Please enter product code' }]}
+        >
+          <Input />
+        </Form.Item>
+
+        
+      </div>
+      {/* Dimensions */}
+      <div className="bg-white p-6 rounded-lg shadow mb-6">
+        <h2 className="text-lg font-semibold mb-4">Dimensions</h2>
+
+        <Form.Item
+          name="weight"
+          label="Weight (kg)"
+          rules={[{ required: true, message: 'Please enter weight' }]}
+        >
+          <InputNumber min={0} style={{ width: '100%' }} />
+        </Form.Item>
+
+        <Form.Item
+          name="length"
+          label="Length (cm)"
+          rules={[{ required: true, message: 'Please enter length' }]}
+        >
+          <InputNumber min={0} style={{ width: '100%' }} />
+        </Form.Item>
+
+        <Form.Item
+          name="height"
+          label="Height (cm)"
+          rules={[{ required: true, message: 'Please enter height' }]}
+        >
+          <InputNumber min={0} style={{ width: '100%' }} />
+        </Form.Item>
+
+        <Form.Item
+          name="width"
+          label="Width (cm)"
+          rules={[{ required: true, message: 'Please enter width' }]}
+        >
+          <InputNumber min={0} style={{ width: '100%' }} />
         </Form.Item>
       </div>
 
@@ -147,6 +197,36 @@ const ProductForm: React.FC<ProductFormProps> = ({
         </Form.List>
       </div>
 
+      {/* Product Images */}
+      <div className="bg-white p-6 rounded-lg shadow mb-6">
+        <h2 className="text-lg font-semibold mb-4">Product Images</h2>
+
+        <Form.List name="productImages">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name, ...restField }) => (
+                <div key={key} className="border p-4 mb-4 rounded">
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'url']}
+                    label="Image URL"
+                    rules={[{ required: true, message: 'Please enter image URL' }]}
+                  >
+                    <Input placeholder="Enter image URL" />
+                  </Form.Item>
+                  <Button type="link" danger onClick={() => remove(name)}>
+                    Remove Image
+                  </Button>
+                </div>
+              ))}
+              <Button type="dashed" onClick={() => add()} block>
+                <PlusOutlined /> Add Image
+              </Button>
+            </>
+          )}
+        </Form.List>
+      </div>
+
       {/* Product Prices */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
         <h2 className="text-lg font-semibold mb-4">Product Prices</h2>
@@ -177,6 +257,15 @@ const ProductForm: React.FC<ProductFormProps> = ({
                       rules={[{ required: true, message: 'Missing inventory' }]}
                     >
                       <InputNumber min={0} />
+                    </Form.Item>
+
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'urlImage']}
+                      label="Image URL"
+                      rules={[{ required: true, message: 'Please enter image URL' }]}
+                    >
+                      <Input placeholder="Enter image URL" />
                     </Form.Item>
 
                     <Form.Item

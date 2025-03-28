@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { 
-    Card, 
-    Space, 
-    Typography, 
-    Row, 
-    Col, 
-    Table, 
-    Badge, 
+import {
+    Card,
+    Space,
+    Typography,
+    Row,
+    Col,
+    Table,
+    Badge,
     Button,
     Image,
     Statistic,
@@ -19,11 +19,12 @@ import {
     Popconfirm,
     Switch,
     Tag,
-    Divider
+    Divider,
+    Upload
 } from "antd";
-import { 
-    TagOutlined, 
-    ShopOutlined, 
+import {
+    TagOutlined,
+    ShopOutlined,
     BarcodeOutlined,
     DollarOutlined,
     EditOutlined,
@@ -31,12 +32,14 @@ import {
     ArrowLeftOutlined,
     LoadingOutlined,
     PlusOutlined,
-    MinusCircleOutlined
+    MinusCircleOutlined,
+    UploadOutlined
 } from '@ant-design/icons';
 import { useNavigate, useParams } from "react-router";
 import { getProductById, deleteProduct, updateProduct } from "../../services/product.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { IUpdateProduct, ProductTypeDetail, ProductPrice } from "../../types/IProduct";
+import { uploadImage } from "../../services/image.service";
 
 const { Title, Text } = Typography;
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
@@ -45,24 +48,24 @@ const ProductDetailScreen: React.FC = () => {
     const categories = [
         { id: "E9ED58DF-EFF3-449C-BE72-08DD5F6FD641", name: "Food" },
         { id: "A6281BBB-22C0-4667-C1C4-08DD636ECAA0", name: "Toy" },
-      ];
-    
-      const brands = [
+    ];
+
+    const brands = [
         { id: "159141F3-96DA-4051-820E-11FAE16AC3FE", name: "PetCare" },
         { id: "F45FC4F5-D85F-47B9-AB0B-1BA984388093", name: "AnimalPlanet" },
-      ];
-    
-      const stores = [
+    ];
+
+    const stores = [
         { id: "BA270842-CA21-4EED-AB5B-3493DED3BC27", name: "Pet World" },
         { id: "80947517-4F05-4866-B409-6CCBEE5ECEE0", name: "Animal Care Center" },
-      ];
+    ];
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const queryClient = useQueryClient();
     const [form] = Form.useForm();
     const [isEditing, setIsEditing] = useState(false);
 
-    const { 
+    const {
         data: productDetail,
         isLoading,
         isError,
@@ -72,6 +75,23 @@ const ProductDetailScreen: React.FC = () => {
         queryFn: () => getProductById(id!),
         enabled: !!id
     });
+    const handleImageUpload = async (file: File) => {
+        try {
+            const response = await uploadImage(file);
+            const currentImages = form.getFieldValue("productImages") || [];
+            form.setFieldsValue({ productImages: [...currentImages, { url: response.url }] });
+            message.success("Image uploaded successfully!");
+        } catch (error) {
+            message.error("Failed to upload image.");
+        }
+    };
+
+    const handleDeleteImage = (index: number) => {
+        const currentImages = form.getFieldValue("productImages") || [];
+        currentImages.splice(index, 1); // Remove the image at the specified index
+        form.setFieldsValue({ productImages: [...currentImages] });
+        message.success("Image deleted successfully!");
+    };
 
     const deleteMutation = useMutation({
         mutationFn: deleteProduct,
@@ -87,7 +107,7 @@ const ProductDetailScreen: React.FC = () => {
     });
 
     const updateMutation = useMutation({
-        mutationFn: (updatedProduct: IUpdateProduct) => 
+        mutationFn: (updatedProduct: IUpdateProduct) =>
             updateProduct(id!, updatedProduct),
         onSuccess: () => {
             message.success('Product updated successfully');
@@ -130,21 +150,21 @@ const ProductDetailScreen: React.FC = () => {
                 ...rest,
                 id: id || '', // Đảm bảo id luôn là string
                 name: values.name || '', // Đảm bảo name luôn là string
-            
+
                 // Tìm ID của category, brand, store từ danh sách tương ứng
                 productCategoryId: categories.find(c => c.name.toLocaleLowerCase === values.categoryName.toLocaleLowerCase)?.id || '',
                 brandId: brands.find(b => b.name === values.brandName)?.id || '',
                 storeId: stores.find(s => s.name === values.storeName)?.id || '',
-            
+
                 isActive: values.isActive ?? false, // Đảm bảo giá trị boolean
-                productCode: values.productCode || '',
-                views: values.views ?? 1, // Nếu `views` là undefined, gán giá trị mặc định là 0
-            
+                productDescription: values.productDescription || '',
+                views: values.views ?? 1,
+
                 productTypes: values.productTypes,
                 productPrices: values.productPrices
             };
-            
-            
+
+
             updateMutation.mutate({
                 ...productUpdate,
                 ...values
@@ -165,7 +185,7 @@ const ProductDetailScreen: React.FC = () => {
         if (!productTypes || productTypes.length === 0) return [];
 
         const combinations: ProductPrice[] = [];
-        
+
         const type1 = productTypes[0];
         const type2 = productTypes[1];
 
@@ -177,7 +197,7 @@ const ProductDetailScreen: React.FC = () => {
                 productTypeDetails1: detail1?.name,
                 productTypeDetails2: '',
             }));
-        } 
+        }
 
         return type1.productTypeDetails.flatMap((detail1: ProductTypeDetail) =>
             type2.productTypeDetails.map((detail2: ProductTypeDetail) => ({
@@ -191,12 +211,12 @@ const ProductDetailScreen: React.FC = () => {
 
     useEffect(() => {
         const currentPrices = form.getFieldValue('productPrices') || [];
-        
+
         if (JSON.stringify(currentPrices) !== JSON.stringify(priceCombinations)) {
             const newPrices = priceCombinations.map((combination: ProductPrice) => {
                 const existingPrice = currentPrices.find(
-                    (price: ProductPrice) => 
-                        price.productTypeDetails1 === combination.productTypeDetails1 && 
+                    (price: ProductPrice) =>
+                        price.productTypeDetails1 === combination.productTypeDetails1 &&
                         price.productTypeDetails2 === combination.productTypeDetails2
                 );
                 return existingPrice || combination;
@@ -254,8 +274,8 @@ const ProductDetailScreen: React.FC = () => {
             <Card className="mb-6">
                 <Space className="w-full justify-between">
                     <Space>
-                        <Button 
-                            icon={<ArrowLeftOutlined />} 
+                        <Button
+                            icon={<ArrowLeftOutlined />}
                             onClick={() => navigate('/products')}
                         >
                             Back to Products
@@ -265,8 +285,8 @@ const ProductDetailScreen: React.FC = () => {
                     <Space>
                         {isEditing ? (
                             <>
-                                <Button 
-                                    type="primary" 
+                                <Button
+                                    type="primary"
                                     onClick={handleSave}
                                     loading={updateMutation.isPending}
                                 >
@@ -278,8 +298,8 @@ const ProductDetailScreen: React.FC = () => {
                             </>
                         ) : (
                             <>
-                                <Button 
-                                    icon={<EditOutlined />} 
+                                <Button
+                                    icon={<EditOutlined />}
                                     type="primary"
                                     onClick={handleEdit}
                                 >
@@ -292,8 +312,8 @@ const ProductDetailScreen: React.FC = () => {
                                     okText="Yes"
                                     cancelText="No"
                                 >
-                                    <Button 
-                                        icon={<DeleteOutlined />} 
+                                    <Button
+                                        icon={<DeleteOutlined />}
                                         danger
                                         loading={deleteMutation.isPending}
                                     >
@@ -309,7 +329,7 @@ const ProductDetailScreen: React.FC = () => {
             <Form form={form} layout="vertical">
                 <Row gutter={16}>
                     <Col xs={24} xl={16}>
-                        <Card 
+                        <Card
                             title={
                                 <Space>
                                     <TagOutlined className="text-blue-500" />
@@ -334,16 +354,15 @@ const ProductDetailScreen: React.FC = () => {
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item
-                                        name="productCode"
-                                        label="Product Code"
-                                        rules={[{ required: true, message: 'Please enter product code' }]}
+                                        name="productDescription"
+                                        label="Product Description"
+                                        rules={[{ required: true, message: 'Please enter product description' }]}
                                     >
                                         {isEditing ? (
                                             <Input />
                                         ) : (
                                             <Space>
-                                                <BarcodeOutlined />
-                                                {productDetail?.productCode}
+                                                {productDetail?.productDescription}
                                             </Space>
                                         )}
                                     </Form.Item>
@@ -356,12 +375,12 @@ const ProductDetailScreen: React.FC = () => {
                                     >
                                         {isEditing ? (
                                             <Select value={brands.find(b => b.name === productDetail?.brandName)?.id}>
-                                            {brands.map((brand) => (
-                                              <Select.Option key={brand.id} value={brand.id}>
-                                                {brand.name}
-                                              </Select.Option>
-                                            ))}
-                                          </Select>
+                                                {brands.map((brand) => (
+                                                    <Select.Option key={brand.id} value={brand.id}>
+                                                        {brand.name}
+                                                    </Select.Option>
+                                                ))}
+                                            </Select>
                                         ) : (
                                             <Tag color="blue">{productDetail?.brandName}</Tag>
                                         )}
@@ -375,12 +394,12 @@ const ProductDetailScreen: React.FC = () => {
                                     >
                                         {isEditing ? (
                                             <Select value={stores.find(b => b.name === productDetail?.storeName)?.id}>
-                                            {stores.map((store) => (
-                                              <Select.Option key={store.id} value={store.id}>
-                                                {store.name}
-                                              </Select.Option>
-                                            ))}
-                                          </Select>
+                                                {stores.map((store) => (
+                                                    <Select.Option key={store.id} value={store.id}>
+                                                        {store.name}
+                                                    </Select.Option>
+                                                ))}
+                                            </Select>
                                         ) : (
                                             <Tag color="green">{productDetail?.storeName}</Tag>
                                         )}
@@ -394,12 +413,12 @@ const ProductDetailScreen: React.FC = () => {
                                     >
                                         {isEditing ? (
                                             <Select value={categories.find(b => b.name === productDetail?.categoryName)?.id}>
-                                            {categories.map((category) => (
-                                              <Select.Option key={category.id} value={category.name}>
-                                                {category.name}
-                                              </Select.Option>
-                                            ))}
-                                          </Select>
+                                                {categories.map((category) => (
+                                                    <Select.Option key={category.id} value={category.name}>
+                                                        {category.name}
+                                                    </Select.Option>
+                                                ))}
+                                            </Select>
                                         ) : (
                                             <Tag color="yellow">{productDetail?.categoryName}</Tag>
                                         )}
@@ -414,9 +433,9 @@ const ProductDetailScreen: React.FC = () => {
                                         {isEditing ? (
                                             <Switch />
                                         ) : (
-                                            <Badge 
-                                                status={productDetail?.isActive ? "success" : "error"} 
-                                                text={productDetail?.isActive ? "Active" : "Inactive"} 
+                                            <Badge
+                                                status={productDetail?.isActive ? "success" : "error"}
+                                                text={productDetail?.isActive ? "Active" : "Inactive"}
                                             />
                                         )}
                                     </Form.Item>
@@ -424,7 +443,7 @@ const ProductDetailScreen: React.FC = () => {
                             </Row>
                         </Card>
 
-                        <Card 
+                        <Card
                             title={
                                 <Space>
                                     <TagOutlined className="text-green-500" />
@@ -460,9 +479,9 @@ const ProductDetailScreen: React.FC = () => {
                                                                         >
                                                                             <Input placeholder={`Enter ${form.getFieldValue(['productTypes', index, 'name'])} option`} />
                                                                         </Form.Item>
-                                                                        <Button 
-                                                                            type="text" 
-                                                                            danger 
+                                                                        <Button
+                                                                            type="text"
+                                                                            danger
                                                                             icon={<MinusCircleOutlined />}
                                                                             onClick={() => removeDetail(subIndex)}
                                                                         />
@@ -494,10 +513,10 @@ const ProductDetailScreen: React.FC = () => {
                                 productDetail.productTypes.map((type, index) => (
                                     <div key={type.name} className="mb-4">
                                         <Title level={5}>
-                                            <Badge 
+                                            <Badge
                                                 count={`Type ${index + 1}: ${type.name}`}
-                                                style={{ 
-                                                    backgroundColor: index === 0 ? '#1890ff' : '#52c41a' 
+                                                style={{
+                                                    backgroundColor: index === 0 ? '#1890ff' : '#52c41a'
                                                 }}
                                             />
                                         </Title>
@@ -514,7 +533,7 @@ const ProductDetailScreen: React.FC = () => {
                             )}
                         </Card>
 
-                        <Card 
+                        <Card
                             title={
                                 <Space>
                                     <DollarOutlined className="text-yellow-500" />
@@ -525,61 +544,128 @@ const ProductDetailScreen: React.FC = () => {
                             <Form.List name="productPrices">
                                 {(fields, { }) => (
                                     <>
-                                        <Table
-                                            dataSource={fields.map(field => ({
-                                                ...field,
-                                                key: field.key,
-                                                ...form.getFieldValue(['productPrices', field.name])
-                                            }))}
-                                            pagination={false}
-                                            scroll={{ x: true }}
-                                            columns={[
-                                                {
-                                                    title: 'Type 1',
-                                                    dataIndex: 'productTypeDetails1',
-                                                    key: 'productTypeDetails1',
-                                                },
-                                                {
-                                                    title: 'Type 2',
-                                                    dataIndex: 'productTypeDetails2',
-                                                    key: 'productTypeDetails2',
-                                                },
-                                                {
-                                                    title: 'Price',
-                                                    key: 'price',
-                                                    render: (_, __, index) => (
-                                                        <Form.Item
-                                                            name={[index, 'price']}
-                                                            rules={[{ required: true, message: 'Required' }]}
-                                                            noStyle
-                                                        >
-                                                            <InputNumber
-                                                                min={0}
-                                                                style={{ width: '100%' }}
-                                                                placeholder="Enter price"
-                                                            />
-                                                        </Form.Item>
-                                                    ),
-                                                },
-                                                {
-                                                    title: 'Inventory',
-                                                    key: 'inventory',
-                                                    render: (_, __, index) => (
-                                                        <Form.Item
-                                                            name={[index, 'inventory']}
-                                                            rules={[{ required: true, message: 'Required' }]}
-                                                            noStyle
-                                                        >
-                                                            <InputNumber
-                                                                min={0}
-                                                                style={{ width: '100%' }}
-                                                                placeholder="Enter inventory"
-                                                            />
-                                                        </Form.Item>
-                                                    ),
-                                                }
-                                            ]}
-                                        />
+                                        {isEditing ? (
+                                            <Table
+                                                dataSource={fields.map(field => ({
+                                                    ...field,
+                                                    key: field.key,
+                                                    ...form.getFieldValue(['productPrices', field.name])
+                                                }))}
+                                                pagination={false}
+                                                scroll={{ x: true }}
+                                                columns={[
+                                                    {
+                                                        title: 'Type 1',
+                                                        dataIndex: 'productTypeDetails1',
+                                                        key: 'productTypeDetails1',
+                                                    },
+                                                    {
+                                                        title: 'Type 2',
+                                                        dataIndex: 'productTypeDetails2',
+                                                        key: 'productTypeDetails2',
+                                                    },
+                                                    {
+                                                        title: 'Price',
+                                                        key: 'price',
+                                                        render: (_, __, index) => (
+                                                            <Form.Item
+                                                                name={[index, 'price']}
+                                                                rules={[{ required: true, message: 'Required' }]}
+                                                                noStyle
+                                                            >
+                                                                <InputNumber
+                                                                    min={0}
+                                                                    style={{ width: '100%' }}
+                                                                    placeholder="Enter price"
+                                                                    formatter={(value) =>
+                                                                        `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                                                                    }
+                                                                />
+                                                            </Form.Item>
+                                                        ),
+                                                    },
+                                                    {
+                                                        title: 'Inventory',
+                                                        key: 'inventory',
+                                                        render: (_, __, index) => (
+                                                            <Form.Item
+                                                                name={[index, 'inventory']}
+                                                                rules={[{ required: true, message: 'Required' }]}
+                                                                noStyle
+                                                            >
+                                                                <InputNumber
+                                                                    min={0}
+                                                                    style={{ width: '100%' }}
+                                                                    placeholder="Enter inventory"
+                                                                />
+                                                            </Form.Item>
+                                                        ),
+                                                    }
+                                                ]}
+                                            />
+                                        ) : (
+                                            <Table
+                                                dataSource={fields.map(field => ({
+                                                    ...field,
+                                                    key: field.key,
+                                                    ...form.getFieldValue(['productPrices', field.name])
+                                                }))}
+                                                pagination={false}
+                                                scroll={{ x: true }}
+                                                columns={[
+                                                    {
+                                                        title: 'Type 1',
+                                                        dataIndex: 'productTypeDetails1',
+                                                        key: 'productTypeDetails1',
+                                                    },
+                                                    {
+                                                        title: 'Type 2',
+                                                        dataIndex: 'productTypeDetails2',
+                                                        key: 'productTypeDetails2',
+                                                    },
+                                                    {
+                                                        title: 'Price',
+                                                        key: 'price',
+                                                        render: (_, __, index) => (
+                                                            <Form.Item
+                                                                name={[index, 'price']}
+                                                                rules={[{ required: true, message: 'Required' }]}
+                                                                noStyle
+                                                            >
+                                                                <InputNumber
+                                                                    min={0}
+                                                                    style={{ width: '100%' }}
+                                                                    placeholder="Enter price"
+                                                                    formatter={(value) =>
+                                                                        `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                                                                    }
+                                                                    readOnly
+                                                                />
+                                                            </Form.Item>
+                                                        ),
+                                                    },
+                                                    {
+                                                        title: 'Inventory',
+                                                        key: 'inventory',
+                                                        render: (_, __, index) => (
+                                                            <Form.Item
+                                                                name={[index, 'inventory']}
+                                                                rules={[{ required: true, message: 'Required' }]}
+                                                                noStyle
+                                                            >
+                                                                <InputNumber
+                                                                    min={0}
+                                                                    style={{ width: '100%' }}
+                                                                    placeholder="Enter inventory"
+                                                                    readOnly
+                                                                />
+                                                            </Form.Item>
+                                                        ),
+                                                    }
+                                                ]}
+                                            />
+                                        )}
+
                                     </>
                                 )}
                             </Form.List>
@@ -600,7 +686,7 @@ const ProductDetailScreen: React.FC = () => {
                                     <Statistic
                                         title="Total Inventory"
                                         value={productDetail?.productPrices.reduce(
-                                            (sum, price) => sum + price.inventory, 
+                                            (sum, price) => sum + price.inventory,
                                             0
                                         )}
                                         prefix={<ShopOutlined />}
@@ -627,7 +713,7 @@ const ProductDetailScreen: React.FC = () => {
                             </Row>
                         </Card>
 
-                        <Card 
+                        <Card
                             title={
                                 <Space>
                                     <TagOutlined className="text-purple-500" />
@@ -635,19 +721,51 @@ const ProductDetailScreen: React.FC = () => {
                                 </Space>
                             }
                         >
-                            <Image.PreviewGroup>
-                                <Row gutter={[8, 8]}>
-                                    {[1, 2, 3, 4].map((i) => (
-                                        <Col span={12} key={i}>
-                                            <Image
-                                                src={`https://placeholder.com/300x300?text=Product+${i}`}
-                                                alt={`Product Image ${i}`}
-                                                className="rounded-lg"
-                                            />
-                                        </Col>
-                                    ))}
-                                </Row>
-                            </Image.PreviewGroup>
+                            {isEditing ? (
+                                <div>
+                                    <Row gutter={[8, 8]}>
+                                        {form.getFieldValue("productImages")?.map((image: { url: string }, index: number) => (
+                                            <Col span={12} key={index}>
+                                                <Image src={image.url} alt={`Product Image ${index}`} className="rounded-lg" />
+                                                <Button
+                                                    type="link"
+                                                    danger
+                                                    onClick={() => handleDeleteImage(index)}
+                                                    style={{ marginTop: 8 }}
+                                                >
+                                                    Remove
+                                                </Button>
+                                            </Col>
+                                        ))}
+                                    </Row>
+                                    <Upload
+                                        beforeUpload={(file) => {
+                                            handleImageUpload(file);
+                                            return false; // Prevent default upload behavior
+                                        }}
+                                        showUploadList={false}
+                                    >
+                                        <Button type="dashed" className="mt-4" icon={<UploadOutlined />}>
+                                            Add Image
+                                        </Button>
+                                    </Upload>
+                                </div>
+                            ) : (
+                                <Image.PreviewGroup>
+                                    <Row gutter={[8, 8]}>
+                                        {productDetail?.productImages.map((image, index) => (
+                                            <Col span={12} key={index}>
+                                                <Image
+                                                    src={image.url}
+                                                    alt={`Product Image ${index}`}
+                                                    className="rounded-lg"
+                                                />
+                                            </Col>
+                                        ))}
+                                    </Row>
+                                </Image.PreviewGroup>
+                            )}
+
                         </Card>
                     </Col>
                 </Row>

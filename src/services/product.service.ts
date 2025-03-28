@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { client } from './clients';
-import { IAddProduct, IProduct, IProductDetail } from '../types/IProduct';
+import { IAddProduct, IProduct, IProductDetail, IUpdateProduct } from '../types/IProduct';
 import { IResponse } from '../types/IResponse';
 
 const BASE_URL = '/product';
@@ -29,8 +29,8 @@ export const addProduct = async (product: IAddProduct): Promise<IAddProduct> => 
 };
 
 // Update a product
-export const updateProduct = async (id: string, product: IAddProduct): Promise<IAddProduct> => {
-  const response: AxiosResponse<IAddProduct> = await client.put(`${BASE_URL}/${id}`, product);
+export const updateProduct = async (id: string, product: IUpdateProduct): Promise<IUpdateProduct> => {
+  const response: AxiosResponse<IUpdateProduct> = await client.put(`${BASE_URL}/${id}`, product);
   return response.data;
 };
 
