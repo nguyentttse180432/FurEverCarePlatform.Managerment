@@ -11,7 +11,7 @@ export const useCreateService = () => {
         onSuccess: (createdService: IServiceDetailResponse) => {
             queryClient.invalidateQueries({ queryKey: ["services"] });
             navigate("/services", { replace: true });
-            console.log("User added successfully", createdService);
+            console.log("Service added successfully", createdService);
         },
     });
 };
