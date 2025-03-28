@@ -24,9 +24,17 @@ export interface IAuthState {
   logout: () => void;
   clearError: () => void; // Method to clear any stored errors
   updateProfile: (
+    id: number,
+    email: string, 
     name: string, 
-    password: string, 
-    phone: string
+    phoneNumber: string
+  ) => Promise<{
+    success: boolean;
+    error?: string; // Optional error message
+  }>;
+  changePassword: (
+    oldPassword: string, 
+    newPassword: string
   ) => Promise<{
     success: boolean;
     error?: string; // Optional error message

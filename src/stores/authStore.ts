@@ -130,29 +130,28 @@ export const useAuthStore = create<AuthStore>()(
         set({ error: null });
       },
 
-      updateProfile: async (name, password, phone) => {
+      updateProfile: async (id, email, name, phoneNumber) => {
         try {
           const token = get().token;
           const user = get().user; // Ensure user object is retrieved
-          const users = localStorage.getItem("auth-storage");
-          const userss = users ? JSON.parse(users) : null;
-          console.log(userss);
 
           if (!user?.id) {
             throw new Error("User ID is missing");
           }
 
           const response = await fetch(
-            `http://hair-salon-fpt.io.vn/api/v1/Profile/${user.id}`,
+            `${authAPI}/Profile/${user.id}`,
             {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
               },
-              body: JSON.stringify({ name, password, phone }),
+              body: JSON.stringify({ id: user.id, email, name, phoneNumber }),
             }
           );
+
+          console.log(response);
 
           const text = await response.text();
           const data = text ? JSON.parse(text) : {};
@@ -166,20 +165,15 @@ export const useAuthStore = create<AuthStore>()(
           }
 
           set({
-            user: data.user,
-            token: data.token,
-            error: null,
+            user: {
+              ...user,
+              name,
+              phoneNumber,
+            },
+            error: null
           });
 
-          localStorage.setItem(
-            "auth-storage",
-            JSON.stringify({
-              state: {
-                user: data.user,
-                token: data.accessToken,
-              },
-            })
-          );
+          console.log("data", data);
 
           return { success: true };
         } catch (error) {
@@ -191,6 +185,49 @@ export const useAuthStore = create<AuthStore>()(
           return { success: false, error: errorMessage };
         }
       },
+      changePassword: async ( oldPassword, newPassword) => {
+        try {
+          const token = get().token;
+          const user = get().user; // Ensure user object is retrieved
+
+          if (!user?.id) {
+            throw new Error("User ID is missing");
+          }
+
+          const response = await fetch(
+            `${authAPI}/Profile/update-password`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ id: user.id, oldPassword, newPassword }),
+            }
+          );
+
+          const text = await response.text();
+          const data = text ? JSON.parse(text) : {};
+
+          if (!response.ok) {
+            const errorMessage = data.errors?.length
+              ? data.errors[0]
+              : "Password change failed";
+            set({ error: errorMessage });
+            return { success: false, error: errorMessage };
+          }
+
+          return { success: true };
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : "An unexpected error occurred";
+
+          set({ error: errorMessage });
+          return { success: false, error: errorMessage };
+        }
+      }
     }),
     { name: "auth-storage" }
   )
