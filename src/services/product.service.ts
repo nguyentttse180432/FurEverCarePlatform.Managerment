@@ -174,5 +174,24 @@ export const handleProductError = (error: any): string => {
     return 'Error setting up the request';
   }
 };
+export const getCategories = () => {
+  return [
+    { id: "8858B173-9D33-4D4A-B7E5-02A1E1AF53B3", name: "Phụ Kiện thú cưng" },
+    { id: "43715788-0B06-4ACE-92CB-2D1AF7A46B6F", name: "Thức ăn cho chó" },
+  ];
+};
 
+export const getBrands = () => {
+  return [
+    { id: "E9534604-C257-4CC5-9831-03C4E6B1C2FE", name: "Royal Canin" },
+    { id: "9C9C5050-C1F5-4E39-A522-68825D380355", name: "Purina" },
+  ];
+};
+
+export const getStores = () => {
+  return [
+    { id: "9AAA435C-72F4-4885-B701-42B6DE5FCBD6", name: "Store 1" },
+    { id: "AD1B7764-A89E-45BC-95EF-ADD55ECBC1E1", name: "Store 5" },
+  ];
+};
 export type { IAddProduct as Product };

@@ -36,7 +36,7 @@ import {
     UploadOutlined
 } from '@ant-design/icons';
 import { useNavigate, useParams } from "react-router";
-import { getProductById, deleteProduct, updateProduct } from "../../services/product.service";
+import { getProductById, deleteProduct, updateProduct, getCategories, getBrands, getStores } from "../../services/product.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { IUpdateProduct, ProductTypeDetail, ProductPrice } from "../../types/IProduct";
 import { uploadImage } from "../../services/image.service";
@@ -45,20 +45,11 @@ const { Title, Text } = Typography;
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const ProductDetailScreen: React.FC = () => {
-    const categories = [
-        { id: "E9ED58DF-EFF3-449C-BE72-08DD5F6FD641", name: "Food" },
-        { id: "A6281BBB-22C0-4667-C1C4-08DD636ECAA0", name: "Toy" },
-    ];
-
-    const brands = [
-        { id: "159141F3-96DA-4051-820E-11FAE16AC3FE", name: "PetCare" },
-        { id: "F45FC4F5-D85F-47B9-AB0B-1BA984388093", name: "AnimalPlanet" },
-    ];
-
-    const stores = [
-        { id: "BA270842-CA21-4EED-AB5B-3493DED3BC27", name: "Pet World" },
-        { id: "80947517-4F05-4866-B409-6CCBEE5ECEE0", name: "Animal Care Center" },
-    ];
+    const categories = getCategories();
+    
+      const brands = getBrands();
+    
+      const stores = getStores();
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const queryClient = useQueryClient();
