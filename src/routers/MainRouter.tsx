@@ -2,11 +2,7 @@ import { Affix, Layout } from "antd";
 import { BrowserRouter, Route, Routes } from "react-router";
 import SiderComponent from "../components/common/SiderComponent";
 import HeaderComponent from "../components/common/HeaderComponent";
-import HomePage from "../screens/HomeScreen";
-import UsersScreen from "../screens/users/UsersScreen";
-import UserDetailScreen from "../screens/users/UserDetailScreen";
 import NotFound from "../screens/NotFound";
-import AddUserScreen from "../screens/users/AddUserScreen";
 import StoresScreen from "../screens/stores/StoresScreen";
 import AddStoreScreen from "../screens/stores/AddStoreScreen";
 import StoreDetailScreen from "../screens/stores/StoreDetailScreen";
@@ -35,10 +31,10 @@ const MainRouter = () => {
           </Affix>
           <Content className="pt-3 container-fluid">
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<StoresScreen />} />
               <Route path="*" element={<NotFound />} />
               <Route path="/profile" element={<Profile />} />
-              
+
               {/* Service route */}
               <Route>
                 <Route path="/services" element={<ServicesScreen />} />
@@ -51,13 +47,8 @@ const MainRouter = () => {
                   element={<AddServiceScreen />}
                 />
               </Route>
-              <Route>
-                <Route path="/users" element={<UsersScreen />} />
-                <Route path="/users/add-user" element={<AddUserScreen />} />
-                <Route path="/users/:id" element={<UserDetailScreen />} />
-              </Route>
 
-              {/* Store route */}
+              {/* Product route */}
               <Route>
                 <Route path="/products" element={<ProductsScreen />} />
                 <Route

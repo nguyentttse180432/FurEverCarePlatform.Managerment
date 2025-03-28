@@ -2,11 +2,9 @@
 
 import { Flex, Layout, Menu, MenuProps, Image, Typography } from "antd";
 import { Link } from "react-router";
-import { MdOutlineInventory } from "react-icons/md";
 import { appInfo } from "../../constants/appInfos";
 import { colors } from "../../constants/colors";
-import { TbHome2 } from "react-icons/tb";
-import {AiFillContainer, AiFillProduct, AiFillShop } from "react-icons/ai";
+import { AiFillContainer, AiFillProduct, AiFillShop } from "react-icons/ai";
 import { AiOutlineTable } from "react-icons/ai";
 import { AiOutlineFileAdd } from "react-icons/ai";
 
@@ -16,26 +14,6 @@ type MenuItem = Required<MenuProps>["items"][number];
 
 const SiderComponent = () => {
   const items: MenuItem[] = [
-    {
-      key: "dashboard",
-      label: <Link to={"/"}>Dashboard</Link>,
-      icon: <TbHome2 size={20} />,
-    },
-    {
-      key: "users",
-      label: "Users",
-      icon: <MdOutlineInventory size={20} />,
-      children: [
-        {
-          key: "users",
-          label: <Link to={"/users"}>All</Link>,
-        },
-        {
-          key: "addNew",
-          label: <Link to={`/users/add-user`}>Add new</Link>,
-        },
-      ],
-    },
     {
       key: "stores",
       label: "Stores Management",
@@ -74,7 +52,7 @@ const SiderComponent = () => {
     {
       key: "services",
       label: "Services Management",
-      icon: <AiFillContainer  size={20} />,
+      icon: <AiFillContainer size={20} />,
       children: [
         {
           key: "stores",
