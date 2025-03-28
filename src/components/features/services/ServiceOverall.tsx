@@ -63,9 +63,23 @@ const ServiceOverall: React.FC<ServiceOverallProps> = ({ form }) => {
             <Form.Item
                 label="Estimated Time"
                 name="estimatedTime"
-                rules={[{ required: true, message: "Please enter the estimated time" }]}
+                rules={[
+                    { required: true, message: "Please enter the estimated time" },
+                    ({ getFieldValue }) => ({
+                        validator(_, value) {
+                            if (!value) {
+                                return Promise.reject("Please enter the estimated time");
+                            }
+                            const regex = /^\d+\s*-\s*\d+\s*(minutes|hours)$/i;
+                            if (!regex.test(value)) {
+                                return Promise.reject("Format must be '10 - 20 minutes' or '1 - 2 hours'");
+                            }
+                            return Promise.resolve();
+                        },
+                    }),
+                ]}
             >
-                <Input />
+                <Input placeholder="e.g. 10 - 20 minutes or 1 - 2 hours" />
             </Form.Item>
 
             <Form.Item
