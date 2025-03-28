@@ -1,28 +1,26 @@
-import { Form, Input, Radio } from "antd";
+import {
+  Button,
+  Form,
+  FormInstance,
+  Input,
+  Radio,
+  Upload,
+  UploadProps,
+} from "antd";
 import { useState } from "react";
-// const { Dragger } = Upload;
-// const props: UploadProps = {
-//   name: "file",
-//   multiple: true,
-//   action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-//   onChange(info) {
-//     const { status } = info.file;
-//     if (status !== "uploading") {
-//       console.log(">>>> ", info.file.name);
-//       console.log(info.file, info.fileList);
-//     }
-//     if (status === "done") {
-//       message.success(`${info.file.name} file uploaded successfully.`);
-//     } else if (status === "error") {
-//       message.error(`${info.file.name} file upload failed.`);
-//     }
-//   },
-//   onDrop(e) {
-//     console.log("Dropped files", e.dataTransfer.files);
-//   },
-// };
 
-const StoreIdentityFormItem = () => {
+type StoreIdentityProps = {
+  form: FormInstance;
+};
+
+const StoreIdentityFormItem = (appProps: StoreIdentityProps) => {
+  const form = appProps.form;
+
+  const uploadProps: UploadProps = {
+    action: `${import.meta.env.VITE_BACKEND_URL}/image`,
+    listType: "picture",
+  };
+
   const [identityTypeName, setIdentityTypeName] = useState<string>(
     "Căn cước công dân (CCCD)"
   );
@@ -75,47 +73,51 @@ const StoreIdentityFormItem = () => {
         <Input placeholder={`Nhập số ${identityTypeName}`} />
       </Form.Item>
 
-      {/* <Form.Item
+      <Form.Item
         label="Hình chụp mặt trước của thẻ CMND/CCCD/Hộ chiếu"
+        name="frontIdentityCardUrl"
         style={{ marginBottom: 20, textAlign: "left" }}
       >
-        <Dragger {...props}>
-          <p className="ant-upload-drag-icon">
-            <AiOutlineCloudUpload size={30} />
-          </p>
-          <p className="ant-upload-text">
-            Click or drag file to this area to upload
-          </p>
-          <p className="ant-upload-hint">
-            Support for a single or bulk upload. Strictly prohibited from
-            uploading company data or other banned files.
-          </p>
-        </Dragger>
-      </Form.Item>
-      <Form.Item name="frontIdetityCard" hidden>
-        <Input hidden value="url here" />
-      </Form.Item> */}
+        <Upload
+          {...uploadProps}
+          onChange={(info) => {
+            const { status, response } = info.file;
 
-      {/* <Form.Item
-        label="Hình chụp mặt sau của thẻ CMND/CCCD/Hộ chiếu"
-        style={{ marginBottom: 0, textAlign: "left" }}
-      >
-        <Dragger {...props}>
-          <p className="ant-upload-drag-icon">
-            <AiOutlineCloudUpload size={30} />
-          </p>
-          <p className="ant-upload-text">
-            Click or drag file to this area to upload
-          </p>
-          <p className="ant-upload-hint">
-            Support for a single or bulk upload. Strictly prohibited from
-            uploading company data or other banned files.
-          </p>
-        </Dragger>
+            const event = info.event;
+            if (status === "done" && response) {
+              form.setFieldsValue({
+                ...form.getFieldsValue(), // Retain existing values
+                frontIdentityCardUrl: response, // Update only logoUrl
+              });
+            }
+          }}
+        >
+          <Button>Upload</Button>
+        </Upload>
       </Form.Item>
-      <Form.Item name="backIdentityCard" hidden>
-        <Input hidden value="url here" />
-      </Form.Item> */}
+
+      <Form.Item
+        label="Hình chụp mặt sau của thẻ CMND/CCCD/Hộ chiếu"
+        name="backIdentityCardUrl"
+        style={{ marginBottom: 20, textAlign: "left" }}
+      >
+        <Upload
+          {...uploadProps}
+          onChange={(info) => {
+            const { status, response } = info.file;
+
+            const event = info.event;
+            if (status === "done" && response) {
+              form.setFieldsValue({
+                ...form.getFieldsValue(), // Retain existing values
+                backIdentityCardUrl: response, // Update only logoUrl
+              });
+            }
+          }}
+        >
+          <Button>Upload</Button>
+        </Upload>
+      </Form.Item>
     </div>
   );
 };

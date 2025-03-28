@@ -106,8 +106,6 @@ const StoresScreen = () => {
       render: (store: IStore) => (
         <Space size="middle">
           <a onClick={() => showLoading(store.id)}>View</a>
-          <a>Update</a>
-          <a>Delete</a>
         </Space>
       ),
     },

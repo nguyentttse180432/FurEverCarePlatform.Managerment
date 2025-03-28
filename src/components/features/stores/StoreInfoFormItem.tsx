@@ -94,28 +94,26 @@ const StoreInfoFormItem = (propss: StoreInforFormItemProps) => {
         name="logoUrl"
         style={{ marginBottom: 20, textAlign: "left" }}
       >
-        {!form.getFieldValue("bannerUrl") && (
-          <Upload
-            {...props}
-            onChange={(info) => {
-              const { status, response } = info.file;
+        <Upload
+          {...props}
+          onChange={(info) => {
+            const { status, response } = info.file;
 
-              const event = info.event;
-              if (status === "done" && response) {
-                setLogoUrlLink(response);
-                form.setFieldsValue({
-                  ...form.getFieldsValue(), // Retain existing values
-                  logoUrl: response, // Update only logoUrl
-                });
-              }
-            }}
-          >
-            <Button>Upload</Button>
-          </Upload>
-        )}
-        {form.getFieldValue("logoUrl") && (
-          <Image src={form.getFieldValue("logoUrl")} />
-        )}
+            const event = info.event;
+            if (status === "done" && response) {
+              setLogoUrlLink(response);
+              form.setFieldsValue({
+                ...form.getFieldsValue(), // Retain existing values
+                logoUrl: response, // Update only logoUrl
+              });
+            }
+          }}
+          onPreview={(file) => {
+            return file.response;
+          }}
+        >
+          <Button>Upload</Button>
+        </Upload>
       </Form.Item>
 
       <Form.Item

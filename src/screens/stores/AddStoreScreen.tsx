@@ -36,7 +36,7 @@ const AddStoreScreen = () => {
     },
     {
       title: "Thông tin định danh",
-      content: <StoreIdentityFormItem />,
+      content: <StoreIdentityFormItem form={form} />,
     },
     {
       title: "Hoàn tất",
@@ -89,12 +89,8 @@ const AddStoreScreen = () => {
                 const data = {
                   ...values,
                   ...formValues,
-                  frontIdentityCardUrl:
-                    "https://th.bing.com/th/id/OIP.4sMsTuOp1LwzLbGH54E9qwHaE1?rs=1&pid=ImgDetMain",
-                  backIdentityCardUrl:
-                    "https://th.bing.com/th/id/OIP.8ZMj9lZJKAvlwAeksWMH3QAAAA?rs=1&pid=ImgDetMain",
-                  addressId: "f9360811-ac86-4521-8bcb-8921f3f3ed08",
                 };
+                console.log("Form value here: ", data);
                 mutate(data);
               }}
             >
