@@ -34,7 +34,7 @@ const SignUp = () => {
         navigate("/");
       } else {
         // Display the specific error message
-         setBackendError(result.error || "Sign-up failed");
+        setBackendError(result.error || "Sign-up failed");
         message.error(result.error || "Sign-up failed");
       }
     } catch (error) {
@@ -99,10 +99,8 @@ const SignUp = () => {
         >
           <Form.Item
             name="name"
-            label="Full Name"
-            rules={[
-              { required: true, message: "Please enter your full name!" },
-            ]}
+            label="Username"
+            rules={[{ required: true, message: "Please enter your username!" }]}
           >
             <Input placeholder="Enter your full name" allowClear />
           </Form.Item>

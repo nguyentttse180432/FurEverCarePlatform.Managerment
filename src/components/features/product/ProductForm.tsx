@@ -13,7 +13,7 @@ import {
   Row,
   Col,
   message,
-  Image
+  Image,
 } from "antd";
 import {
   MinusCircleOutlined,
@@ -28,7 +28,6 @@ import {
   ProductPrice,
   ProductTypeDetail,
 } from "../../../types/IProduct";
-import { colors } from "../../../constants/colors";
 
 const { Title, Text } = Typography;
 
@@ -122,8 +121,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
         initialValues={initialValues}
         className="space-y-6"
       >
-
-
         {/* Basic Information */}
         <Card
           className="shadow-md hover:shadow-lg transition-shadow"
@@ -143,7 +140,14 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 label="Tên Sản Phẩm"
                 rules={[
                   { required: true, message: "Vui lòng nhập tên sản phẩm" },
-                  { max: 50, message: "Tên sản phẩm không được vượt quá 50 ký tự" },
+                  {
+                    max: 50,
+                    message: "Tên sản phẩm không được vượt quá 50 ký tự",
+                  },
+                  {
+                    pattern: /^[a-zA-Z0-9À-ỹ\s]+$/,
+                    message: "Tên sản phẩm không được chứa ký tự đặc biệt",
+                  },
                 ]}
               >
                 <Input
@@ -175,9 +179,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
               <Form.Item
                 name="productCategoryId"
                 label="Danh Mục"
-                rules={[
-                  { required: true, message: "Vui lòng chọn danh mục" },
-                ]}
+                rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
               >
                 <Select
                   size="large"
@@ -196,7 +198,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
               <Form.Item
                 name="brandId"
                 label="Thương Hiệu"
-                rules={[{ required: true, message: "Vui lòng chọn thương hiệu" }]}
+                rules={[
+                  { required: true, message: "Vui lòng chọn thương hiệu" },
+                ]}
               >
                 <Select
                   size="large"
@@ -265,7 +269,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 label="Khối Lượng (gram)"
                 rules={[
                   { required: true, message: "Vui lòng nhập khối lượng" },
-                  { type: "number", min: 0, message: "Khối lượng phải là số dương" },
+                  {
+                    type: "number",
+                    min: 0,
+                    message: "Khối lượng phải là số dương",
+                  },
                 ]}
               >
                 <InputNumber min={0} style={{ width: "100%" }} />
@@ -277,7 +285,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 label="Chiều Dài (cm)"
                 rules={[
                   { required: true, message: "Vui lòng nhập chiều dài" },
-                  { type: "number", min: 0, message: "Chiều dài phải là số dương" },
+                  {
+                    type: "number",
+                    min: 0,
+                    message: "Chiều dài phải là số dương",
+                  },
                 ]}
               >
                 <InputNumber min={0} style={{ width: "100%" }} />
@@ -289,7 +301,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 label="Chiều Cao (cm)"
                 rules={[
                   { required: true, message: "Vui lòng nhập chiều cao" },
-                  { type: "number", min: 0, message: "Chiều cao phải là số dương" },
+                  {
+                    type: "number",
+                    min: 0,
+                    message: "Chiều cao phải là số dương",
+                  },
                 ]}
               >
                 <InputNumber min={0} style={{ width: "100%" }} />
@@ -301,7 +317,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 label="Chiều Rộng (cm)"
                 rules={[
                   { required: true, message: "Vui lòng nhập chiều rộng" },
-                  { type: "number", min: 0, message: "Chiều rộng phải là số dương" },
+                  {
+                    type: "number",
+                    min: 0,
+                    message: "Chiều rộng phải là số dương",
+                  },
                 ]}
               >
                 <InputNumber min={0} style={{ width: "100%" }} />
@@ -329,7 +349,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 validator: async (_, value) => {
                   if (!value || value.length === 0) {
                     console.log("Vui lòng tải lên ít nhất một hình ảnh");
-                    return Promise.reject(new Error("Vui lòng tải lên ít nhất một hình ảnh"));
+                    return Promise.reject(
+                      new Error("Vui lòng tải lên ít nhất một hình ảnh")
+                    );
                   }
                 },
               },
@@ -346,7 +368,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
                       }}
                       showUploadList={false}
                     >
-                      <Button icon={<UploadOutlined />}>Tải Lên Hình Ảnh</Button>
+                      <Button icon={<UploadOutlined />}>
+                        Tải Lên Hình Ảnh
+                      </Button>
                     </Upload>
                     {/* Hiển thị ảnh đã upload */}
                     {form.getFieldValue("productImages")?.[name] && (
@@ -390,13 +414,15 @@ const ProductForm: React.FC<ProductFormProps> = ({
               {
                 validator: async (_, value) => {
                   if (!value || value.length === 0) {
-                    return Promise.reject(new Error("Vui lòng thêm ít nhất một loại sản phẩm"));
+                    return Promise.reject(
+                      new Error("Vui lòng thêm ít nhất một loại sản phẩm")
+                    );
                   }
                 },
               },
             ]}
           >
-            {(fields, { add, remove }, {errors}) => (
+            {(fields, { add, remove }, { errors }) => (
               <>
                 {fields.map(({ key, name, ...restField }) => (
                   <div key={key} className="border p-4 mb-4 rounded">
@@ -404,7 +430,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
                       {...restField}
                       name={[name, "name"]}
                       label="Tên Loại"
-                      rules={[{ required: true, message: "Vui lòng nhập tên loại" }]}
+                      rules={[
+                        { required: true, message: "Vui lòng nhập tên loại" },
+                      ]}
                     >
                       <Input />
                     </Form.Item>
@@ -415,14 +443,20 @@ const ProductForm: React.FC<ProductFormProps> = ({
                           validator: async (_, value) => {
                             if (!value || value.length === 0) {
                               return Promise.reject(
-                                new Error("Vui lòng thêm ít nhất một chi tiết loại")
+                                new Error(
+                                  "Vui lòng thêm ít nhất một chi tiết loại"
+                                )
                               );
                             }
                           },
                         },
                       ]}
                     >
-                      {(subFields, { add: addDetail, remove: removeDetail }, { errors }) => (
+                      {(
+                        subFields,
+                        { add: addDetail, remove: removeDetail },
+                        { errors }
+                      ) => (
                         <>
                           {subFields.map((subField, index) => (
                             <Space key={subField.key} align="baseline">
@@ -430,21 +464,30 @@ const ProductForm: React.FC<ProductFormProps> = ({
                                 {...restField}
                                 name={[subField.name, "name"]}
                                 rules={[
-                                  { required: true, message: "Vui lòng nhập tên chi tiết" },
+                                  {
+                                    required: true,
+                                    message: "Vui lòng nhập tên chi tiết",
+                                  },
                                 ]}
                               >
                                 <Input placeholder="Tên chi tiết" />
                               </Form.Item>
-                              <MinusCircleOutlined onClick={() => removeDetail(index)} />
+                              <MinusCircleOutlined
+                                onClick={() => removeDetail(index)}
+                              />
                             </Space>
                           ))}
-                          <Button type="dashed" onClick={() => addDetail()} block>
+                          <Button
+                            type="dashed"
+                            onClick={() => addDetail()}
+                            block
+                          >
                             <PlusOutlined /> Thêm Chi Tiết
                           </Button>
                         </>
                       )}
                     </Form.List>
-                    
+
                     <Button type="link" danger onClick={() => remove(name)}>
                       Xóa Loại
                     </Button>
@@ -481,7 +524,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
               {
                 validator: async (_, value) => {
                   if (!value || value.length === 0) {
-                    return Promise.reject(new Error("Vui lòng thêm ít nhất một cấu hình giá"));
+                    return Promise.reject(
+                      new Error("Vui lòng thêm ít nhất một cấu hình giá")
+                    );
                   }
                 },
               },
@@ -499,7 +544,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
                           label="Giá"
                           rules={[
                             { required: true, message: "Vui lòng nhập giá" },
-                            { type: "number", min: 0, message: "Giá phải là số dương" },
+                            {
+                              type: "number",
+                              min: 0,
+                              message: "Giá phải là số dương",
+                            },
                           ]}
                         >
                           <InputNumber
@@ -517,8 +566,15 @@ const ProductForm: React.FC<ProductFormProps> = ({
                           name={[name, "inventory"]}
                           label="Tồn Kho"
                           rules={[
-                            { required: true, message: "Vui lòng nhập tồn kho" },
-                            { type: "number", min: 0, message: "Tồn kho phải là số dương" },
+                            {
+                              required: true,
+                              message: "Vui lòng nhập tồn kho",
+                            },
+                            {
+                              type: "number",
+                              min: 0,
+                              message: "Tồn kho phải là số dương",
+                            },
                           ]}
                         >
                           <InputNumber min={0} style={{ width: "100%" }} />
